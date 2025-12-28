@@ -87,8 +87,8 @@ const saveBalanceUpdate = async () => {
         <div class="flex justify-end gap-2">
           <UTooltip text="Update Balance">
             <UButton 
-              icon="i-heroicons-pencil-square" 
-              size="sm" 
+              icon="i-lucide-circle-dollar-sign" 
+              
               color="success" 
               variant="ghost" 
               class="cursor-pointer"
@@ -97,8 +97,7 @@ const saveBalanceUpdate = async () => {
           </UTooltip>
           <UTooltip text="View History">
             <UButton 
-              icon="i-heroicons-chart-bar"  
-              size="sm" 
+              icon="i-lucide-chart-no-axes-combined"  
               color="primary" 
               variant="ghost" 
               :to="`/accounts/${row.original.id}`"

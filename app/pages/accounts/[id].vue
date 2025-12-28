@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { CalendarDate, type DateValue } from '@internationalized/date'
-
 const route = useRoute()
-const { accounts, updateBalance, getBalanceHistory } = useNetWorth()
+const { accounts, getBalanceHistory } = useNetWorth()
 
 const accountId = route.params.id as string
 const account = computed(() => accounts.value.find(a => a.id === accountId))
@@ -35,23 +33,16 @@ const historyRows = computed(() => {
   }))
 })
 
-const isUpdateModalOpen = ref(false)
-const newBalanceValue = ref(0)
-const today = new Date()
-const newBalanceDate = ref<DateValue>(new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate()))
+const isEditModalOpen = ref(false)
+const isUpdateBalanceModalOpen = ref(false)
 
-// Initialize update form with current balance
-watchEffect(() => {
-  if (account.value) {
-    newBalanceValue.value = account.value.latestBalance
-  }
-})
-
-const saveBalanceUpdate = async () => {
-  const dateStr = `${newBalanceDate.value.year}-${String(newBalanceDate.value.month).padStart(2, '0')}-${String(newBalanceDate.value.day).padStart(2, '0')}`
-  await updateBalance(accountId, newBalanceValue.value, dateStr)
+const handleAccountSaved = async () => {
   await reloadHistory()
-  isUpdateModalOpen.value = false
+}
+
+const handleBalanceUpdated = async () => {
+  await reloadHistory()
+  isUpdateBalanceModalOpen.value = false
 }
 </script>
 
@@ -70,9 +61,28 @@ const saveBalanceUpdate = async () => {
             </UBadge>
           </div>
         </div>
-        <UButton label="Update Balance" @click="isUpdateModalOpen = true" icon="i-heroicons-pencil-square" />
+        <div class="flex gap-2">
+          <UButton label="Update Balance" @click="isUpdateBalanceModalOpen = true" icon="i-lucide-circle-dollar-sign" variant="soft" />
+          <UButton label="Edit Account" @click="isEditModalOpen = true" icon="i-lucide-square-pen" />
+        </div>
       </div>
 
+      <!-- Balance History Chart -->
+      <UCard>
+        <template #header>
+          <div class="text-lg font-bold">Balance Trend</div>
+        </template>
+        <div v-if="isLoading" class="flex justify-center py-8">
+          <UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-gray-500" />
+        </div>
+        <BalanceHistoryChart 
+          v-else 
+          :balance-history="balanceHistory" 
+          :account-type="account?.type"
+        />
+      </UCard>
+
+      <!-- Balance History Table -->
       <UCard>
         <template #header>
           <div class="text-lg font-bold">Balance History</div>
@@ -86,35 +96,30 @@ const saveBalanceUpdate = async () => {
         <UTable v-else :columns="historyColumns" :data="historyRows" />
       </UCard>
       
+      <!-- Edit Account Modal -->
+      <UModal v-model:open="isEditModalOpen">
+        <template #content>
+          <div class="p-4">
+            <h3 class="text-lg font-bold mb-4">Edit Account</h3>
+            <EditAccountForm 
+              :account="account" 
+              @close="isEditModalOpen = false"
+              @saved="handleAccountSaved"
+            />
+          </div>
+        </template>
+      </UModal>
+      
       <!-- Update Balance Modal -->
-      <UModal v-model:open="isUpdateModalOpen">
+      <UModal v-model:open="isUpdateBalanceModalOpen">
         <template #content>
           <div class="p-4">
             <h3 class="text-lg font-bold mb-4">Update Balance</h3>
-            
-            <div class="space-y-4">
-              <UFormField label="Date">
-                <UInputDate v-model="newBalanceDate">
-                  <template #trailing>
-                    <UPopover>
-                      <UButton color="neutral" variant="link" size="sm" icon="i-lucide-calendar" aria-label="Select a date" class="px-0" />
-                      <template #content>
-                        <UCalendar v-model="newBalanceDate" class="p-2" />
-                      </template>
-                    </UPopover>
-                  </template>
-                </UInputDate>
-              </UFormField>
-              
-              <UFormField label="New Balance">
-                <UInputNumber v-model="newBalanceValue" :format-options="{ style: 'currency', currency: 'USD' }" :step="0.01" />
-              </UFormField>
-
-              <div class="flex justify-end gap-2 mt-4">
-                <UButton label="Cancel" color="neutral" variant="ghost" @click="isUpdateModalOpen = false" />
-                <UButton label="Save" color="primary" @click="saveBalanceUpdate" />
-              </div>
-            </div>
+            <UpdateBalanceForm 
+              :preselected-account-id="accountId"
+              @close="isUpdateBalanceModalOpen = false"
+              @saved="handleBalanceUpdated"
+            />
           </div>
         </template>
       </UModal>
@@ -126,3 +131,4 @@ const saveBalanceUpdate = async () => {
     </div>
   </UContainer>
 </template>
+

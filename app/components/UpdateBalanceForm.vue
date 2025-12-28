@@ -3,7 +3,11 @@ import { z } from 'zod'
 import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
 import type { FormSubmitEvent } from '#ui/types'
 
-const emit = defineEmits(['close'])
+const props = defineProps<{
+  preselectedAccountId?: string
+}>()
+
+const emit = defineEmits(['close', 'saved'])
 
 const { accounts, updateBalance, isReady } = useNetWorth()
 
@@ -27,10 +31,18 @@ const accountOptions = computed(() => {
 const todayDate = today(getLocalTimeZone())
 
 const state = reactive({
-  accountId: '',
+  accountId: props.preselectedAccountId || '',
   balance: 0,
   date: todayDate as CalendarDate
 })
+
+// Initialize balance if account is preselected
+if (props.preselectedAccountId) {
+  const account = accounts.value.find(a => a.id === props.preselectedAccountId)
+  if (account) {
+    state.balance = account.latestBalance
+  }
+}
 
 // When account is selected, pre-fill with current balance
 watch(() => state.accountId, (newId) => {
@@ -53,6 +65,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   state.balance = 0
   state.date = todayDate
 
+  emit('saved')
   emit('close')
 }
 </script>

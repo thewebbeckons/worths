@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
-
 useHead({
   meta: [
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
@@ -22,65 +20,16 @@ useSeoMeta({
   ogTitle: title,
   ogDescription: description
 })
-
-const route = useRoute()
-
-const navItems = computed<NavigationMenuItem[]>(() => [
-  {
-    label: 'Dashboard',
-    icon: 'i-lucide-layout-dashboard',
-    to: '/',
-    active: route.path === '/'
-  },
-  {
-    label: 'Accounts',
-    icon: 'i-lucide-wallet',
-    to: '/accounts',
-    active: route.path.startsWith('/accounts')
-  }
-])
 </script>
 
 <template>
   <UApp>
-    <UHeader title="NetWorth">
-      <UNavigationMenu :items="navItems" />
-
-      <template #right>
-        <UButton
-          to="/settings"
-          icon="i-lucide-user"
-          aria-label="Settings"
-          color="neutral"
-          variant="ghost"
-        />
-        <UColorModeButton />
-      </template>
-    </UHeader>
+    <AppHeader />
 
     <UMain>
       <NuxtPage />
     </UMain>
 
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
-        </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UFooter>
+    <AppFooter />
   </UApp>
 </template>

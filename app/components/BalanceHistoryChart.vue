@@ -2,10 +2,9 @@
 import { AreaChart } from 'vue-chrts'
 
 const props = defineProps<{
-  startDate?: Date | null
+  balanceHistory: { date: string; value: number }[]
+  accountType?: 'asset' | 'liability'
 }>()
-
-const { getFilteredHistory } = useNetWorth()
 
 // Parse date string as local date to avoid timezone offset issues
 const parseLocalDate = (dateStr: string): Date => {
@@ -14,19 +13,18 @@ const parseLocalDate = (dateStr: string): Date => {
 }
 
 const data = computed(() => {
-  const history = getFilteredHistory(props.startDate ?? null)
-  return history.map(item => ({
+  return props.balanceHistory.map(item => ({
     ...item,
     date: new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(parseLocalDate(item.date))
   }))
 })
 
-const categories = {
+const categories = computed(() => ({
   value: {
-    name: 'Net Worth',
-    color: '#3b82f6' // Emerald 500
+    name: 'Balance',
+    color: props.accountType === 'liability' ? '#ef4444' : '#10b981' // Red for liability, green for asset
   }
-} as any
+} as any))
 
 const xFormatter = (tick: number, i?: number) => {
   if (typeof i === 'number' && data.value[i]) {
@@ -43,15 +41,6 @@ const yFormatter = (tick: number) => {
     compactDisplay: 'short'
   }).format(tick)
 }
-
-const formatTooltipCurrency = (value: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value)
-}
 </script>
 
 <template>
@@ -64,11 +53,11 @@ const formatTooltipCurrency = (value: number) => {
         :y-formatter="yFormatter"
         :show-tooltip="true"
         :legend-position="LegendPosition.TopRight"
-        :height="300"
+        :height="250"
       />
     </div>
-    <div v-else class="h-full flex items-center justify-center text-gray-500">
-      No data available
+    <div v-else class="h-full flex items-center justify-center text-gray-500 py-8">
+      No balance history available
     </div>
   </div>
 </template>

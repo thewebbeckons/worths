@@ -203,6 +203,59 @@ async function updateBalance(accountId: number, value: number, date: string): Pr
 }
 
 /**
+ * Update an account's details
+ */
+async function updateAccount(accountId: number, data: {
+    name: string
+    bank: string
+    category: string
+    owner: string
+}): Promise<void> {
+    if (import.meta.server) return
+
+    const db = getDb()
+
+    await db.transaction('rw', [db.accounts, db.categories, db.owners], async () => {
+        // Find or create category
+        let category = await db.categories.where('name').equals(data.category).first()
+        let categoryId: number
+
+        if (category && category.id) {
+            categoryId = category.id
+        } else {
+            categoryId = await db.categories.add({ name: data.category }) as number
+        }
+
+        // Find or create owner
+        let owner = await db.owners.where('name').equals(data.owner).first()
+        let ownerId: number
+
+        if (owner && owner.id) {
+            ownerId = owner.id
+        } else {
+            ownerId = await db.owners.add({ name: data.owner }) as number
+        }
+
+        // Determine account type based on category
+        const accountType = isLiabilityCategory(data.category) ? 'liability' : 'asset'
+
+        // Update account
+        await db.accounts.update(accountId, {
+            name: data.name,
+            bank: data.bank,
+            categoryId,
+            owner: data.owner,
+            ownerId,
+            type: accountType
+        })
+    })
+
+    // Reload accounts and regenerate snapshots
+    await loadAccounts()
+    await generateAllSnapshots(db)
+}
+
+/**
  * Get all balances for an account
  */
 async function getAccountBalances(accountId: number): Promise<DbBalance[]> {
@@ -382,6 +435,7 @@ export function useDatabase() {
 
         // Actions
         addAccount,
+        updateAccount,
         updateBalance,
         getAccountBalances,
         getMonthlySnapshots,

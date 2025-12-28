@@ -12,6 +12,7 @@ export const useNetWorth = () => {
         accounts: dbAccounts,
         isReady,
         addAccount: dbAddAccount,
+        updateAccount: dbUpdateAccount,
         updateBalance: dbUpdateBalance,
         getAccountBalances,
         getMonthlySnapshots
@@ -100,6 +101,25 @@ export const useNetWorth = () => {
     }
 
     /**
+     * Update account details
+     */
+    const updateAccount = async (accountId: string, data: {
+        name: string
+        bank: string
+        category: string
+        owner: string
+    }): Promise<void> => {
+        const numericId = parseInt(accountId, 10)
+        if (isNaN(numericId)) {
+            console.error('[useNetWorth] Invalid account ID:', accountId)
+            return
+        }
+
+        await dbUpdateAccount(numericId, data)
+        await loadSnapshots() // Refresh snapshots after update
+    }
+
+    /**
      * Get net worth history from monthly snapshots
      */
     const getNetWorthHistory = computed(() => {
@@ -111,9 +131,15 @@ export const useNetWorth = () => {
 
     /**
      * Current net worth (latest value from accounts)
+     * Assets are added, liabilities are subtracted (using absolute value)
      */
     const currentNetWorth = computed(() => {
-        return dbAccounts.value.reduce((sum, acc) => sum + acc.latestBalance, 0)
+        return dbAccounts.value.reduce((sum, acc) => {
+            if (acc.type === 'liability') {
+                return sum - Math.abs(acc.latestBalance)
+            }
+            return sum + acc.latestBalance
+        }, 0)
     })
 
     /**
@@ -131,6 +157,146 @@ export const useNetWorth = () => {
     })
 
     /**
+     * Monthly growth percentage
+     */
+    const monthlyGrowthPercentage = computed(() => {
+        const snapshots = monthlySnapshots.value
+        if (snapshots.length < 2) return 0
+
+        const latest = snapshots[snapshots.length - 1]
+        const previous = snapshots[snapshots.length - 2]
+
+        if (!latest || !previous || previous.netWorth === 0) return 0
+        return ((latest.netWorth - previous.netWorth) / Math.abs(previous.netWorth)) * 100
+    })
+
+    /**
+     * Get growth for a specific period starting from a date
+     * @param startDate - The start date for calculating growth
+     * @returns Object containing growth amount and percentage
+     */
+    const getGrowthForPeriod = (startDate: Date | null) => {
+        const snapshots = monthlySnapshots.value
+        if (snapshots.length === 0) return { growth: 0, percentage: 0 }
+
+        // Get current net worth (latest snapshot or current calculated)
+        const latestSnapshot = snapshots[snapshots.length - 1]
+        const currentValue = latestSnapshot?.netWorth ?? currentNetWorth.value
+
+        // If no start date (All Time), use first snapshot
+        if (!startDate) {
+            const firstSnapshot = snapshots[0]
+            if (!firstSnapshot || snapshots.length < 2) return { growth: 0, percentage: 0 }
+            const growth = currentValue - firstSnapshot.netWorth
+            const percentage = firstSnapshot.netWorth !== 0
+                ? (growth / Math.abs(firstSnapshot.netWorth)) * 100
+                : 0
+            return { growth, percentage }
+        }
+
+        // Find snapshot closest to or after start date
+        const startMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+
+        // Find the first snapshot >= startMonth
+        let startSnapshot = snapshots.find(s => s.month >= startMonth)
+
+        // If no snapshot found at or after start date, use first available
+        if (!startSnapshot) {
+            startSnapshot = snapshots[0]
+        }
+
+        if (!startSnapshot) return { growth: 0, percentage: 0 }
+
+        const growth = currentValue - startSnapshot.netWorth
+        const percentage = startSnapshot.netWorth !== 0
+            ? (growth / Math.abs(startSnapshot.netWorth)) * 100
+            : 0
+
+        return { growth, percentage }
+    }
+
+    /**
+     * Get assets growth for a specific period starting from a date
+     * @param startDate - The start date for calculating growth
+     * @returns Object containing growth amount and percentage
+     */
+    const getAssetsGrowthForPeriod = (startDate: Date | null) => {
+        const snapshots = monthlySnapshots.value
+        if (snapshots.length === 0) return { growth: 0, percentage: 0 }
+
+        const latestSnapshot = snapshots[snapshots.length - 1]
+        const currentValue = latestSnapshot?.assetsTotal ?? totalAssets.value
+
+        if (!startDate) {
+            const firstSnapshot = snapshots[0]
+            if (!firstSnapshot || snapshots.length < 2) return { growth: 0, percentage: 0 }
+            const growth = currentValue - firstSnapshot.assetsTotal
+            const percentage = firstSnapshot.assetsTotal !== 0
+                ? (growth / Math.abs(firstSnapshot.assetsTotal)) * 100
+                : 0
+            return { growth, percentage }
+        }
+
+        const startMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+        let startSnapshot = snapshots.find(s => s.month >= startMonth)
+        if (!startSnapshot) startSnapshot = snapshots[0]
+        if (!startSnapshot) return { growth: 0, percentage: 0 }
+
+        const growth = currentValue - startSnapshot.assetsTotal
+        const percentage = startSnapshot.assetsTotal !== 0
+            ? (growth / Math.abs(startSnapshot.assetsTotal)) * 100
+            : 0
+
+        return { growth, percentage }
+    }
+
+    /**
+     * Get liabilities growth for a specific period starting from a date
+     * @param startDate - The start date for calculating growth
+     * @returns Object containing growth amount and percentage
+     */
+    const getLiabilitiesGrowthForPeriod = (startDate: Date | null) => {
+        const snapshots = monthlySnapshots.value
+        if (snapshots.length === 0) return { growth: 0, percentage: 0 }
+
+        const latestSnapshot = snapshots[snapshots.length - 1]
+        const currentValue = latestSnapshot?.liabilitiesTotal ?? totalLiabilities.value
+
+        if (!startDate) {
+            const firstSnapshot = snapshots[0]
+            if (!firstSnapshot || snapshots.length < 2) return { growth: 0, percentage: 0 }
+            const growth = currentValue - firstSnapshot.liabilitiesTotal
+            const percentage = firstSnapshot.liabilitiesTotal !== 0
+                ? (growth / Math.abs(firstSnapshot.liabilitiesTotal)) * 100
+                : 0
+            return { growth, percentage }
+        }
+
+        const startMonth = `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(2, '0')}`
+        let startSnapshot = snapshots.find(s => s.month >= startMonth)
+        if (!startSnapshot) startSnapshot = snapshots[0]
+        if (!startSnapshot) return { growth: 0, percentage: 0 }
+
+        const growth = currentValue - startSnapshot.liabilitiesTotal
+        const percentage = startSnapshot.liabilitiesTotal !== 0
+            ? (growth / Math.abs(startSnapshot.liabilitiesTotal)) * 100
+            : 0
+
+        return { growth, percentage }
+    }
+
+    /**
+     * Get filtered net worth history based on start date
+     */
+    const getFilteredHistory = (startDate: Date | null) => {
+        const history = getNetWorthHistory.value
+        if (!startDate) return history
+
+        const startStr = startDate.toISOString().slice(0, 10)
+        return history.filter(item => item.date >= startStr)
+    }
+
+    /**
      * Get accounts grouped by a property
      */
     const getGroupedBreakdown = (groupBy: 'category' | 'owner') => {
@@ -143,6 +309,35 @@ export const useNetWorth = () => {
 
         return Object.entries(groups).map(([name, value]) => ({ name, value }))
     }
+
+    /**
+     * Get asset categories breakdown formatted for CategoryDistribution chart
+     * Only includes asset accounts, grouped by category
+     */
+    const getAssetCategoryBreakdown = computed(() => {
+        const assetAccounts = dbAccounts.value.filter(acc => acc.type === 'asset')
+        const totalAssetValue = assetAccounts.reduce((sum, acc) => sum + acc.latestBalance, 0)
+
+        // Group by category
+        const groups: Record<string, number> = {}
+        for (const acc of assetAccounts) {
+            groups[acc.categoryName] = (groups[acc.categoryName] || 0) + acc.latestBalance
+        }
+
+        // Colors for the chart - modern, vibrant palette
+        const colors = ['#6366f1', '#22d3ee', '#10b981', '#f59e42', '#ec4899', '#8b5cf6', '#f97316']
+
+        // Convert to CategoryDistribution format
+        return Object.entries(groups)
+            .filter(([_, value]) => value > 0)
+            .sort((a, b) => b[1] - a[1]) // Sort by value descending
+            .map(([label, value], index) => ({
+                label,
+                value,
+                percentage: totalAssetValue > 0 ? (value / totalAssetValue) * 100 : 0,
+                color: colors[index % colors.length]
+            }))
+    })
 
     /**
      * Get total assets
@@ -173,14 +368,21 @@ export const useNetWorth = () => {
         getNetWorthHistory,
         currentNetWorth,
         monthlyGrowth,
+        monthlyGrowthPercentage,
         totalAssets,
         totalLiabilities,
+        getAssetCategoryBreakdown,
 
         // Actions
         addAccount,
+        updateAccount,
         updateBalance,
         getBalanceHistory,
         getGroupedBreakdown,
+        getGrowthForPeriod,
+        getAssetsGrowthForPeriod,
+        getLiabilitiesGrowthForPeriod,
+        getFilteredHistory,
         refreshSnapshots: loadSnapshots
     }
 }

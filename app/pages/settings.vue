@@ -225,7 +225,7 @@ const onResetApp = async () => {
       </div>
 
       <!-- Add Owner Modal -->
-      <UModal v-model="isAddingOwner" title="Add New Owner">
+      <UModal v-model:open="isAddingOwner" title="Add New Owner">
         <template #body>
           <div class="space-y-4 py-2">
             <UFormField label="Name" required>
@@ -254,7 +254,7 @@ const onResetApp = async () => {
       </UModal>
 
       <!-- Reset Confirmation Modal -->
-      <UModal v-model="isResetModalOpen" title="Reset Application?">
+      <UModal v-model:open="isResetModalOpen" title="Reset Application?">
         <template #body>
           <UAlert
             icon="i-lucide-alert-triangle"
@@ -271,7 +271,7 @@ const onResetApp = async () => {
         </template>
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton label="Cancel" variant="ghost" @click="isResetModalOpen = false" />
+            <UButton label="Cancel" color="neutral" variant="ghost" @click="isResetModalOpen = false" />
             <UButton
               label="Delete Everything"
               color="error"
