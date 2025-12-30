@@ -90,7 +90,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </UFormField>
 
     <UFormField label="Date" name="date">
-      <UInputDate v-model="state.date" />
+      <UInputDate v-model="state.date" type="date" />
     </UFormField>
 
     <div class="flex justify-end gap-2">
