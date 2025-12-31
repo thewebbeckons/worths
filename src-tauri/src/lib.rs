@@ -1,3 +1,15 @@
+/// Starts the Tauri application configured for this crate.
+///
+/// In debug builds, registers the logging plugin with log level `Info` on the application handle.
+/// This function will panic with "error while running tauri application" if the application fails to start.
+///
+/// # Examples
+///
+/// ```no_run
+/// fn main() {
+///     my_crate::run();
+/// }
+/// ```
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
   tauri::Builder::default()

@@ -68,7 +68,9 @@ class NetWorthDatabase extends Dexie {
 let db: NetWorthDatabase | null = null
 
 /**
- * Get the database instance (creates if needed)
+ * Return the NetWorthDatabase singleton, creating it on first access.
+ *
+ * @returns The NetWorthDatabase singleton instance.
  */
 export function getDb(): NetWorthDatabase {
     if (!db) {
