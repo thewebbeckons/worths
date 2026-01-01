@@ -2,7 +2,7 @@
 
 A modern, privacy-focused net worth tracking desktop application built with [Tauri](https://tauri.app), Nuxt 4, and Nuxt UI. All data is stored locally on your device using IndexedDB.
 
-![Worthie Dashboard](https://github.com/user-attachments/assets/b3866711-7f5a-44ba-9d1e-c1cea033ce68) <!-- Note: Replace with actual screenshot if available -->
+![Worthie Dashboard](./worthie_dashboard.png)
 
 ## Features
 
