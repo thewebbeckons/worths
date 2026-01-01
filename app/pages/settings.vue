@@ -97,28 +97,29 @@ const onExport = async () => {
   }
 }
 
-const importFileInput = ref<HTMLInputElement | null>(null)
-const onImportClick = () => importFileInput.value?.click()
-
-const onImportFile = async (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const file = target.files?.[0]
-  if (!file) return
-
-  if (!confirm('This will REPLACE ALL existing data. Are you sure you want to proceed?')) {
-    target.value = ''
-    return
-  }
-
+const onImportClick = async () => {
   try {
-    const text = await file.text()
+    // Use Tauri's native file dialog
+    const { open } = await import('@tauri-apps/plugin-dialog')
+    const filePath = await open({
+      multiple: false,
+      filters: [{ name: 'JSON', extensions: ['json'] }]
+    })
+    
+    if (!filePath) return // User cancelled
+    
+    if (!confirm('This will REPLACE ALL existing data. Are you sure you want to proceed?')) {
+      return
+    }
+
+    // Read the file contents using Tauri's fs API
+    const { readTextFile } = await import('@tauri-apps/plugin-fs')
+    const text = await readTextFile(filePath as string)
     const json = JSON.parse(text)
     await importDatabase(json)
     toast.add({ title: 'Database imported successfully', color: 'success' })
   } catch (error) {
     toast.add({ title: 'Import failed', color: 'error', description: String(error) })
-  } finally {
-    target.value = ''
   }
 }
 
@@ -211,13 +212,6 @@ const onResetApp = async () => {
             <div class="flex-1 min-w-[200px]">
               <h3 class="font-medium mb-1">Import Data</h3>
               <p class="text-sm text-muted-foreground mb-3">Restore from a JSON backup. This will replace all current data.</p>
-              <input
-                ref="importFileInput"
-                type="file"
-                accept=".json"
-                class="hidden"
-                @change="onImportFile"
-              />
               <UButton
                 icon="i-lucide-upload"
                 label="Import from JSON"

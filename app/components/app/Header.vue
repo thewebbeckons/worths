@@ -20,8 +20,10 @@ const navItems = computed<NavigationMenuItem[]>(() => [
 </script>
 
 <template>
-  <UHeader title="NetWorth">
-    <UNavigationMenu :items="navItems" />
+  <UHeader :toggle="false">
+    <template #left>
+      <UNavigationMenu :items="navItems" />
+    </template>
 
     <template #right>
       <UButton

@@ -20,6 +20,12 @@ importers:
       '@nuxt/ui':
         specifier: ^4.3.0
         version: 4.3.0(@babel/parser@7.28.5)(@floating-ui/dom@1.7.4)(@tiptap/extension-drag-handle@3.14.0(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/extension-collaboration@3.14.0(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0)(@tiptap/y-tiptap@3.0.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.4)(y-protocols@1.0.7(yjs@13.6.28))(yjs@13.6.28))(yjs@13.6.28))(@tiptap/extension-node-range@3.14.0(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0)(@tiptap/y-tiptap@3.0.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.4)(y-protocols@1.0.7(yjs@13.6.28))(yjs@13.6.28)))(@tiptap/extensions@3.14.0(@tiptap/core@3.13.0(@tiptap/pm@3.13.0))(@tiptap/pm@3.13.0))(change-case@5.4.4)(db0@0.3.4)(embla-carousel@8.6.0)(ioredis@5.8.2)(magicast@0.5.1)(typescript@5.9.3)(vite@7.3.0(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue-router@4.6.4(vue@3.5.26(typescript@5.9.3)))(vue@3.5.26(typescript@5.9.3))(zod@4.2.1)
+      '@tauri-apps/plugin-dialog':
+        specifier: ^2.4.2
+        version: 2.4.2
+      '@tauri-apps/plugin-fs':
+        specifier: ^2.4.4
+        version: 2.4.4
       '@vueuse/nuxt':
         specifier: ^14.1.0
         version: 14.1.0(magicast@0.5.1)(nuxt@4.2.2(@parcel/watcher@2.5.1)(@vue/compiler-sfc@3.5.26)(cac@6.7.14)(db0@0.3.4)(eslint@9.39.2(jiti@2.6.1))(ioredis@5.8.2)(lightningcss@1.30.2)(magicast@0.5.1)(optionator@0.9.4)(rollup@4.54.0)(terser@5.44.1)(typescript@5.9.3)(vite@7.3.0(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(yaml@2.8.2))(vue-tsc@3.2.1(typescript@5.9.3))(yaml@2.8.2))(vue@3.5.26(typescript@5.9.3))
@@ -1717,6 +1723,9 @@ packages:
     peerDependencies:
       vue: ^2.7.0 || ^3.0.0
 
+  '@tauri-apps/api@2.9.1':
+    resolution: {integrity: sha512-IGlhP6EivjXHepbBic618GOmiWe4URJiIeZFlB7x3czM0yDHHYviH1Xvoiv4FefdkQtn6v7TuwWCRfOGdnVUGw==}
+
   '@tauri-apps/cli-darwin-arm64@2.9.6':
     resolution: {integrity: sha512-gf5no6N9FCk1qMrti4lfwP77JHP5haASZgVbBgpZG7BUepB3fhiLCXGUK8LvuOjP36HivXewjg72LTnPDScnQQ==}
     engines: {node: '>= 10'}
@@ -1787,6 +1796,12 @@ packages:
     resolution: {integrity: sha512-3xDdXL5omQ3sPfBfdC8fCtDKcnyV7OqyzQgfyT5P3+zY6lcPqIYKQBvUasNvppi21RSdfhy44ttvJmftb0PCDw==}
     engines: {node: '>= 10'}
     hasBin: true
+
+  '@tauri-apps/plugin-dialog@2.4.2':
+    resolution: {integrity: sha512-lNIn5CZuw8WZOn8zHzmFmDSzg5zfohWoa3mdULP0YFh/VogVdMVWZPcWSHlydsiJhRQYaTNSYKN7RmZKE2lCYQ==}
+
+  '@tauri-apps/plugin-fs@2.4.4':
+    resolution: {integrity: sha512-MTorXxIRmOnOPT1jZ3w96vjSuScER38ryXY88vl5F0uiKdnvTKKTtaEjTEo8uPbl4e3gnUtfsDVwC7h77GQLvQ==}
 
   '@tiptap/core@3.13.0':
     resolution: {integrity: sha512-iUelgiTMgPVMpY5ZqASUpk8mC8HuR9FWKaDzK27w9oWip9tuB54Z8mePTxNcQaSPb6ErzEaC8x8egrRt7OsdGQ==}
@@ -7552,6 +7567,8 @@ snapshots:
       '@tanstack/virtual-core': 3.13.13
       vue: 3.5.26(typescript@5.9.3)
 
+  '@tauri-apps/api@2.9.1': {}
+
   '@tauri-apps/cli-darwin-arm64@2.9.6':
     optional: true
 
@@ -7598,6 +7615,14 @@ snapshots:
       '@tauri-apps/cli-win32-arm64-msvc': 2.9.6
       '@tauri-apps/cli-win32-ia32-msvc': 2.9.6
       '@tauri-apps/cli-win32-x64-msvc': 2.9.6
+
+  '@tauri-apps/plugin-dialog@2.4.2':
+    dependencies:
+      '@tauri-apps/api': 2.9.1
+
+  '@tauri-apps/plugin-fs@2.4.4':
+    dependencies:
+      '@tauri-apps/api': 2.9.1
 
   '@tiptap/core@3.13.0(@tiptap/pm@3.13.0)':
     dependencies:
