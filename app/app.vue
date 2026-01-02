@@ -11,7 +11,7 @@ useHead({
   }
 })
 
-const title = 'NetWorth'
+const title = 'Worthie'
 const description = 'Track your net worth and manage your financial accounts.'
 
 useSeoMeta({

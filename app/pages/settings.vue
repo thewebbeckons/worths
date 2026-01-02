@@ -47,8 +47,9 @@ const onAddOwner = async () => {
   }
 }
 
-const onEditOwner = (owner: { id: number; name: string; color?: string }) => {
-  editingOwner.value = owner
+const onEditOwner = (owner: { id?: number; name: string; color?: string }) => {
+  if (owner.id === undefined) return
+  editingOwner.value = { ...owner, id: owner.id }
   editOwnerName.value = owner.name
   editSelectedColor.value = (owner.color as OwnerColor) || 'primary'
   isEditingOwner.value = true
@@ -97,30 +98,31 @@ const onExport = async () => {
   }
 }
 
-const onImportClick = async () => {
-  try {
-    // Use Tauri's native file dialog
-    const { open } = await import('@tauri-apps/plugin-dialog')
-    const filePath = await open({
-      multiple: false,
-      filters: [{ name: 'JSON', extensions: ['json'] }]
-    })
-    
-    if (!filePath) return // User cancelled
+const onImportClick = () => {
+  // Create a hidden file input and trigger it
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = '.json'
+  
+  input.onchange = async (event) => {
+    const file = (event.target as HTMLInputElement).files?.[0]
+    if (!file) return
     
     if (!confirm('This will REPLACE ALL existing data. Are you sure you want to proceed?')) {
       return
     }
 
-    // Read the file contents using Tauri's fs API
-    const { readTextFile } = await import('@tauri-apps/plugin-fs')
-    const text = await readTextFile(filePath as string)
-    const json = JSON.parse(text)
-    await importDatabase(json)
-    toast.add({ title: 'Database imported successfully', color: 'success' })
-  } catch (error) {
-    toast.add({ title: 'Import failed', color: 'error', description: String(error) })
+    try {
+      const text = await file.text()
+      const json = JSON.parse(text)
+      await importDatabase(json)
+      toast.add({ title: 'Database imported successfully', color: 'success' })
+    } catch (error) {
+      toast.add({ title: 'Import failed', color: 'error', description: String(error) })
+    }
   }
+  
+  input.click()
 }
 
 // Danger Zone

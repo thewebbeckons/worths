@@ -22,6 +22,10 @@ const navItems = computed<NavigationMenuItem[]>(() => [
 <template>
   <UHeader :toggle="false">
     <template #left>
+      <div class="flex items-center gap-2 mr-4">
+        <img src="/logo.png" alt="Worthie Logo" class="h-8 w-8 rounded-lg" />
+        <span class="font-bold text-xl hidden sm:block">Worthie</span>
+      </div>
       <UNavigationMenu :items="navItems" />
     </template>
 

@@ -1,8 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/hints', '@vueuse/nuxt', 'nuxt-charts'],
+  modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxt/hints', '@vueuse/nuxt', 'nuxt-charts', '@vite-pwa/nuxt'],
 
-  // Enable SSG mode (required for Tauri - it cannot run SSR)
   ssr: false,
 
   // Icon configuration for production bundling
@@ -14,6 +13,37 @@ export default defineNuxtConfig({
     }
   },
 
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'Worthie',
+      short_name: 'Worthie',
+      description: 'Track your net worth and manage your financial accounts.',
+      theme_color: '#ffffff',
+      icons: [
+        {
+          src: 'icon.png',
+          sizes: '1024x1024',
+          type: 'image/png',
+          purpose: 'any maskable'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/',
+      globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+    },
+    client: {
+      installPrompt: true
+    },
+    devOptions: {
+      enabled: true,
+      suppressWarnings: true,
+      navigateFallback: '/',
+      type: 'module'
+    }
+  },
+
   devtools: {
     enabled: true
   },
@@ -22,23 +52,6 @@ export default defineNuxtConfig({
 
   // Disable telemetry
   telemetry: { enabled: false },
-
-  // Dev server configuration for Tauri
-  devServer: {
-    host: '0.0.0.0'
-  },
-
-  // Vite configuration for Tauri compatibility
-  vite: {
-    clearScreen: false,
-    envPrefix: ['VITE_', 'TAURI_'],
-    server: {
-      strictPort: true
-    }
-  },
-
-  // Ignore Tauri source files in Nuxt watch
-  ignore: ['**/src-tauri/**'],
 
   compatibilityDate: '2025-01-15',
 
