@@ -24,9 +24,9 @@ const navItems = computed<NavigationMenuItem[]>(() => [
     <UDashboardSidebar
       collapsible
       :resizable="true"
-      :default-size="12"
-      :min-size="10"
-      :max-size="14"
+      :default-size="14"
+      :min-size="12"
+      :max-size="18"
     >
       <template #header="{ collapsed }">
         <div class="flex items-center flex-1 py-3" :class="collapsed ? 'justify-center' : 'justify-start'">

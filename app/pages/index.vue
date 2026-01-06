@@ -53,7 +53,7 @@ const periodGrowth = computed(() => getGrowthForPeriod(startDate.value))
     </template>
 
     <template #body>
-      <UContainer class="py-6 space-y-6">
+      <div class="space-y-6">
         <div class="flex flex-col md:flex-row gap-6">
           <DashboardNetWorthCard :current-net-worth="currentNetWorth" :total-assets="totalAssets"
             :total-liabilities="totalLiabilities" :period-growth="periodGrowth" />
@@ -71,7 +71,7 @@ const periodGrowth = computed(() => getGrowthForPeriod(startDate.value))
           <DashboardAssetsListCard />
           <DashboardLiabilitiesListCard />
         </div>
-      </UContainer>
+      </div>
     </template>
   </UDashboardPanel>
 </template>

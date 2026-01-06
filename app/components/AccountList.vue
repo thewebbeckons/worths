@@ -4,6 +4,14 @@ import { CalendarDate, type DateValue } from '@internationalized/date'
 
 const { accounts, updateBalance, deleteAccount } = useNetWorth()
 
+// Props for filter values (controlled by parent)
+const props = defineProps<{
+  searchQuery?: string
+  categoryFilter?: string[]
+  ownerFilter?: string[]
+  bankFilter?: string[]
+}>()
+
 // Helper to format currency
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
@@ -33,20 +41,6 @@ const columns = [
 
 const sorting = ref([])
 
-// Filter state
-const searchInput = useTemplateRef('searchInput')
-const searchQuery = ref('')
-const categoryFilter = ref<string[]>([])
-const ownerFilter = ref<string[]>([])
-const bankFilter = ref<string[]>([])
-
-// Keyboard shortcut to focus search
-defineShortcuts({
-  '/': () => {
-    searchInput.value?.inputRef?.focus()
-  }
-})
-
 const items = computed(() => {
   return accounts.value.map(acc => ({
     id: acc.id,
@@ -60,38 +54,35 @@ const items = computed(() => {
   }))
 })
 
-// Unique filter options
-const categoryOptions = computed(() => {
-  const unique = [...new Set(items.value.map(i => i.category))].sort()
-  return unique.map(c => ({ label: c, value: c }))
-})
-
-const ownerOptions = computed(() => {
-  const unique = [...new Set(items.value.map(i => i.owner))].sort()
-  return unique.map(o => ({ label: o, value: o }))
-})
-
-const bankOptions = computed(() => {
-  const unique = [...new Set(items.value.map(i => i.bank))].sort()
-  return unique.map(b => ({ label: b, value: b }))
-})
-
-// Apply filters
+// Apply filters from props
 const filteredItems = computed(() => {
   return items.value.filter(item => {
     // Search filter (name or bank)
-    if (searchQuery.value) {
-      const query = searchQuery.value.toLowerCase()
+    if (props.searchQuery) {
+      const query = props.searchQuery.toLowerCase()
       const matchesName = item.name.toLowerCase().includes(query)
       const matchesBank = item.bank.toLowerCase().includes(query)
       if (!matchesName && !matchesBank) return false
     }
     // Dropdown filters
-    if (categoryFilter.value.length > 0 && !categoryFilter.value.includes(item.category)) return false
-    if (ownerFilter.value.length > 0 && !ownerFilter.value.includes(item.owner)) return false
-    if (bankFilter.value.length > 0 && !bankFilter.value.includes(item.bank)) return false
+    if (props.categoryFilter && props.categoryFilter.length > 0 && !props.categoryFilter.includes(item.category)) return false
+    if (props.ownerFilter && props.ownerFilter.length > 0 && !props.ownerFilter.includes(item.owner)) return false
+    if (props.bankFilter && props.bankFilter.length > 0 && !props.bankFilter.includes(item.bank)) return false
     return true
   })
+})
+
+// Metrics computed properties
+const totalAccountsCount = computed(() => items.value.length)
+const filteredAccountsCount = computed(() => filteredItems.value.length)
+const filteredAccountsTotal = computed(() => {
+  return filteredItems.value.reduce((sum, item) => {
+    // Subtract liabilities from the total
+    if (item.type === 'liability') {
+      return sum - item.balance
+    }
+    return sum + item.balance
+  }, 0)
 })
 
 // State for updating balance
@@ -153,50 +144,14 @@ const confirmDelete = async () => {
 
 <template>
   <div class="space-y-4">
-    <!-- Filter Bar -->
-    <div class="flex flex-wrap items-center gap-4">
-      <UInput
-        ref="searchInput"
-        v-model="searchQuery"
-        placeholder="Search by name or bank..."
-        icon="i-lucide-search"
-        clear
-        class="w-64"
-      >
-        <template #trailing>
-          <UKbd value="/" />
-        </template>
-      </UInput>
-      <div class="flex-1" />
-      <div class="flex flex-wrap gap-4">
-      <USelectMenu
-        v-if="categoryOptions.length > 1"
-        v-model="categoryFilter"
-        :items="categoryOptions"
-        value-key="value"
-        placeholder="All Categories"
-        multiple
-        class="w-48"
-      />
-      <USelectMenu
-        v-if="ownerOptions.length > 1"
-        v-model="ownerFilter"
-        :items="ownerOptions"
-        value-key="value"
-        placeholder="All Owners"
-        multiple
-        class="w-48"
-      />
-      <USelectMenu
-        v-if="bankOptions.length > 1"
-        v-model="bankFilter"
-        :items="bankOptions"
-        value-key="value"
-        placeholder="All Banks"
-        multiple
-        class="w-48"
-      />
-      </div>
+    <!-- Metrics Bar -->
+    <div class="flex items-center justify-between text-sm">
+      <span class="text-muted">
+        Showing <span class="font-medium text-default">{{ filteredAccountsCount }}</span> out of <span class="font-medium text-default">{{ totalAccountsCount }}</span> accounts
+      </span>
+      <span class="font-medium">
+        Accounts Total: <span :class="filteredAccountsTotal < 0 ? 'text-error' : 'text-primary'">{{ formatCurrency(filteredAccountsTotal) }}</span>
+      </span>
     </div>
 
     <UTable v-model:sorting="sorting" :columns="columns" :data="filteredItems">
@@ -207,7 +162,7 @@ const confirmDelete = async () => {
       </template>
 
       <template #balance-cell="{ row }">
-        <span :class="row.original.balance < 0 ? 'text-error' : 'text-primary'">
+        <span :class="row.original.type === 'liability' || row.original.balance < 0 ? 'text-error' : 'text-primary'">
           {{ formatCurrency(row.original.balance) }}
         </span>
       </template>
