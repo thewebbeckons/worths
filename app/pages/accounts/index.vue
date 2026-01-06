@@ -55,60 +55,57 @@ const bankOptions = computed(() => {
           <UDashboardSidebarCollapse />
         </template>
         <template #right>
-          <div class="flex gap-2">
-            <ExportButton />
-            <UButton label="Add Account" @click="isAddAccountOpen = true" icon="i-heroicons-plus" />
-          </div>
+          <UButton label="Add Account" @click="isAddAccountOpen = true" icon="i-heroicons-plus" />
         </template>
       </UDashboardNavbar>
-      <UDashboardToolbar>
-        <UInput
+    </template>
+
+    <template #body>
+      <div class="space-y-6">
+        <div class="flex items-center justify-between gap-4">
+          <UInput
           ref="searchInput"
           v-model="searchQuery"
           placeholder="Search by name or bank..."
           icon="i-lucide-search"
           clear
           class="w-64"
-        >
-          <template #trailing>
-            <UKbd value="/" />
-          </template>
-        </UInput>
-        <div class="flex-1" />
-        <div class="flex flex-wrap gap-4">
-          <USelectMenu
-            v-if="categoryOptions.length > 1"
-            v-model="categoryFilter"
-            :items="categoryOptions"
-            value-key="value"
-            placeholder="All Categories"
-            multiple
-            class="w-48"
-          />
-          <USelectMenu
-            v-if="ownerOptions.length > 1"
-            v-model="ownerFilter"
-            :items="ownerOptions"
-            value-key="value"
-            placeholder="All Owners"
-            multiple
-            class="w-48"
-          />
-          <USelectMenu
-            v-if="bankOptions.length > 1"
-            v-model="bankFilter"
-            :items="bankOptions"
-            value-key="value"
-            placeholder="All Banks"
-            multiple
-            class="w-48"
-          />
+          >
+            <template #trailing>
+              <UKbd value="/" />
+            </template>
+          </UInput>
+          <div class="flex flex-wrap gap-4">
+            <USelectMenu
+              v-if="categoryOptions.length > 1"
+              v-model="categoryFilter"
+              :items="categoryOptions"
+              value-key="value"
+              placeholder="All Categories"
+              multiple
+              class="w-48"
+            />
+            <USelectMenu
+              v-if="ownerOptions.length > 1"
+              v-model="ownerFilter"
+              :items="ownerOptions"
+              value-key="value"
+              placeholder="All Owners"
+              multiple
+              class="w-48"
+            />
+            <USelectMenu
+              v-if="bankOptions.length > 1"
+              v-model="bankFilter"
+              :items="bankOptions"
+              value-key="value"
+              placeholder="All Banks"
+              multiple
+              class="w-48"
+            />
+          </div>
         </div>
-      </UDashboardToolbar>
-    </template>
-
-    <template #body>
-      <div class="space-y-6">
+        
         <UCard variant="soft">
           <AccountList 
             :search-query="searchQuery"
@@ -117,6 +114,8 @@ const bankOptions = computed(() => {
             :bank-filter="bankFilter"
           />
         </UCard>
+
+        <ExportSection />
       </div>
 
       <UModal v-model:open="isAddAccountOpen" title="Add Account">
