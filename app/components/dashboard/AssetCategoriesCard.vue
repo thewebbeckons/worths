@@ -4,60 +4,68 @@ const { getAssetCategoryBreakdown, totalAssets } = useNetWorth()
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
 }
+
+const formatCompactCurrency = (value: number) => {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`
+  } else if (value >= 1000) {
+    return `$${(value / 1000).toFixed(0)}K`
+  }
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value)
+}
+
+// Get the maximum value to calculate relative bar widths
+const maxValue = computed(() => {
+  if (getAssetCategoryBreakdown.value.length === 0) return 0
+  return Math.max(...getAssetCategoryBreakdown.value.map(c => c.value))
+})
 </script>
 
 <template>
   <UCard class="md:w-1/2" variant="soft">
     <div class="space-y-4">
-      <div class="flex items-baseline gap-3">
+      <div class="flex items-baseline justify-between gap-3">
         <div class="text-lg font-bold uppercase tracking-wider text-neutral-900 dark:text-white">Asset Breakdown</div>
-        <!-- <span class="text-xl font-bold text-neutral-900 dark:text-white">
-          {{ formatCurrency(totalAssets) }}
-        </span> -->
+        <p class="text-sm text-muted font-bold">Total Assets: {{ formatCompactCurrency(totalAssets) }}</p>
       </div>
       
-      <!-- Segmented Progress Bar -->
+      <!-- Horizontal Bar Chart -->
       <div 
         v-if="getAssetCategoryBreakdown.length > 0"
-        class="flex gap-1 h-3 rounded-full overflow-hidden"
-      >
-        <UTooltip
-          v-for="(category, index) in getAssetCategoryBreakdown"
-          :key="category.label"
-          :text="`${category.label}: ${formatCurrency(category.value)} (${category.percentage.toFixed(1)}%)`"
-          :delay-duration="0"
-          :style="{
-            width: `${category.percentage}%`,
-            minWidth: category.percentage > 0 ? '4px' : '0'
-          }"
-          class="h-full"
-        >
-          <div
-            class="h-full w-full rounded-full transition-all duration-300 cursor-default"
-            :style="{
-              backgroundColor: category.color
-            }"
-          />
-        </UTooltip>
-      </div>
-
-      <!-- Legend -->
-      <div 
-        v-if="getAssetCategoryBreakdown.length > 0"
-        class="flex flex-wrap gap-x-6 gap-y-2 mt-4"
+        class="space-y-3"
       >
         <div
           v-for="category in getAssetCategoryBreakdown"
           :key="category.label"
-          class="flex items-center gap-2"
+          class="group"
         >
-          <span 
-            class="w-2.5 h-2.5 rounded-full shrink-0"
-            :style="{ backgroundColor: category.color }"
-          />
-          <span class="text-sm text-neutral-600 dark:text-neutral-400">
-            {{ category.label }}
-          </span>
+          <!-- Category Label Row -->
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+              {{ category.label }}
+            </span>
+            <span class="text-sm font-bold text-neutral-500 dark:text-neutral-400">
+              {{ formatCompactCurrency(category.value) }}
+            </span>
+          </div>
+          
+          <!-- Bar Row with percentage at the end -->
+          <div class="flex items-center gap-1.5">
+            <!-- Bar Fill -->
+            <div
+              class="h-5 rounded-md transition-all duration-500 ease-out"
+              :style="{
+                width: `${maxValue > 0 ? (category.value / maxValue) * 100 : 0}%`,
+                backgroundColor: category.color,
+                minWidth: category.value > 0 ? '8px' : '0'
+              }"
+            />
+            
+            <!-- Percentage attached to end of bar -->
+            <span class="text-xs font-bold text-neutral-500 dark:text-neutral-400">
+              {{ category.percentage.toFixed(0) }}%
+            </span>
+          </div>
         </div>
       </div>
 

@@ -70,6 +70,17 @@ class NetWorthDatabase extends Dexie {
                 await tx.table('categories').update(cat.id, { type: isLiability ? 'liability' : 'asset' })
             }
         })
+
+        // Version 6 schema - add notes field to accounts
+        this.version(6).stores({
+            accounts: '++id, legacyId, categoryId, type, bank, owner',
+            balances: '++id, accountId, date',
+            categories: '++id, name, type',
+            transactions: '++id, legacyId, accountId, date',
+            monthlySnapshots: 'month',
+            categorySnapshots: '++id, [month+categoryId], categoryId',
+            profile: '++id'
+        })
     }
 }
 

@@ -55,7 +55,8 @@ export const useNetWorth = () => {
             owner: acc.ownerName,
             ownerColor: acc.ownerColor,
             type: acc.type,
-            latestBalance: acc.latestBalance
+            latestBalance: acc.latestBalance,
+            notes: acc.notes
         }))
     })
 
@@ -82,6 +83,7 @@ export const useNetWorth = () => {
         category: string
         owner: OwnerType
         initialBalance: number
+        notes?: string
     }): Promise<void> => {
         await dbAddAccount(account)
         await loadSnapshots() // Refresh snapshots after adding
@@ -110,6 +112,7 @@ export const useNetWorth = () => {
         bank: string
         category: string
         owner: OwnerType
+        notes?: string
     }): Promise<void> => {
         const numericId = parseInt(accountId, 10)
         if (isNaN(numericId)) {

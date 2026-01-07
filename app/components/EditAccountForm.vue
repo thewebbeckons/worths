@@ -13,6 +13,7 @@ const props = defineProps<{
     owner: string
     type: 'asset' | 'liability'
     latestBalance: number
+    notes?: string
   }
 }>()
 
@@ -54,6 +55,9 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>
 
+// Separate notes state (not part of zod schema since it's optional HTML content)
+const notes = ref(props.account.notes || '')
+
 // Initialize state with account data
 const state = reactive({
   name: props.account.name,
@@ -68,10 +72,14 @@ watch(() => props.account, (newAccount) => {
   state.bank = newAccount.bank
   state.category = newAccount.category
   state.owner = getOwnerType(newAccount.owner)
+  notes.value = newAccount.notes || ''
 }, { deep: true })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await updateAccount(props.account.id, event.data)
+  await updateAccount(props.account.id, {
+    ...event.data,
+    notes: notes.value || undefined
+  })
   emit('saved')
   emit('close')
 }
@@ -97,6 +105,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         :items="ownerOptions"
         value-key="value"
         label-key="label"
+      />
+    </UFormField>
+
+    <UFormField label="Notes" name="notes" hint="Optional">
+      <UEditor 
+        v-model="notes"
+        content-type="html"
+        placeholder="Add notes about this account (e.g. GIC matures Sept. 28th)"
+        :ui="{ 
+          root: 'border border-default rounded-md',
+          content: 'py-4',
+          base: 'min-h-[120px]'
+        }"
       />
     </UFormField>
 

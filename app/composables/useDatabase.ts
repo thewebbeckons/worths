@@ -139,6 +139,7 @@ async function addAccount(data: {
     category: string
     owner: OwnerType
     initialBalance: number
+    notes?: string
 }): Promise<number | undefined> {
     if (import.meta.server) return
 
@@ -163,7 +164,8 @@ async function addAccount(data: {
             categoryId,
             owner: data.owner,
             type: accountType,
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            notes: data.notes
         }) as number
 
         // Create initial balance
@@ -226,6 +228,7 @@ async function updateAccount(accountId: number, data: {
     bank: string
     category: string
     owner: OwnerType
+    notes?: string
 }): Promise<void> {
     if (import.meta.server) return
 
@@ -248,7 +251,8 @@ async function updateAccount(accountId: number, data: {
             bank: data.bank,
             categoryId,
             owner: data.owner,
-            type: accountType
+            type: accountType,
+            notes: data.notes
         })
     })
 

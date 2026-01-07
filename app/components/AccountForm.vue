@@ -49,6 +49,9 @@ const state = reactive({
   initialBalance: 0
 })
 
+// Separate notes state (not part of zod schema since it's optional HTML content)
+const notes = ref('')
+
 // Set default category when categories load
 watch(categoryOptions, (options) => {
   if (options.length > 0 && !state.category) {
@@ -57,12 +60,16 @@ watch(categoryOptions, (options) => {
 }, { immediate: true })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await addAccount(event.data)
+  await addAccount({
+    ...event.data,
+    notes: notes.value || undefined
+  })
   // Reset form or close modal
   state.name = ''
   state.bank = ''
   state.initialBalance = 0
   state.owner = 'me'
+  notes.value = ''
   
   if (props.onSuccess) {
     props.onSuccess()
@@ -97,6 +104,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
     <UFormField label="Initial Balance" name="initialBalance">
       <UInputNumber v-model="state.initialBalance" :format-options="{ style: 'currency', currency: 'USD' }" :step="0.01" />
+    </UFormField>
+
+    <UFormField label="Notes" name="notes" hint="Optional">
+      <UEditor 
+        v-model="notes"
+        content-type="html"
+        placeholder="Add notes about this account (e.g. GIC matures Sept. 28th)"
+        :ui="{ 
+          root: 'border border-default rounded-md',
+          content: 'py-4',
+          base: 'min-h-[120px]'
+        }"
+      />
     </UFormField>
 
     <div class="flex justify-end gap-2">

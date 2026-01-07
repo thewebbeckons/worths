@@ -50,8 +50,8 @@ const handleBalanceUpdated = async () => {
   <UContainer class="py-6 space-y-6">
     <div v-if="account" class="space-y-6">
       <UButton variant="link" icon="i-heroicons-arrow-left" to="/accounts" class="p-0 mb-2">Back to Accounts</UButton>
-      <div class="flex justify-between items-center">
-        <div class="space-y-2">          
+      <div class="flex justify-between items-start gap-4">
+        <div class="space-y-2 flex-1">          
           <h1 class="text-3xl font-bold">{{ account.name }}</h1>
           <div class="flex gap-2 text-gray-500">
             <UBadge color="neutral">{{ account.category }}</UBadge>
@@ -61,7 +61,19 @@ const handleBalanceUpdated = async () => {
             </UBadge>
           </div>
         </div>
-        <div class="flex gap-2">
+        
+        <!-- Notes Card -->
+        <UCard v-if="account.notes" variant="subtle" class="max-w-sm">
+          <template #header>
+            <div class="flex items-center gap-2 text-sm font-medium text-muted">
+              <UIcon name="i-lucide-sticky-note" class="w-4 h-4" />
+              Notes
+            </div>
+          </template>
+          <div class="text-sm prose prose-sm dark:prose-invert max-w-none" v-html="account.notes" />
+        </UCard>
+        
+        <div class="flex gap-2 shrink-0">
           <UButton label="Update Balance" @click="isUpdateBalanceModalOpen = true" icon="i-lucide-circle-dollar-sign" variant="soft" />
           <UButton label="Edit Account" @click="isEditModalOpen = true" icon="i-lucide-square-pen" />
         </div>

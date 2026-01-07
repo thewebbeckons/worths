@@ -13,6 +13,7 @@ export interface DbAccount {
     owner: 'me' | 'spouse' | 'joint'
     type: 'asset' | 'liability'
     createdAt: string
+    notes?: string  // Optional markdown/HTML notes for the account
 }
 
 // Owner type for accounts

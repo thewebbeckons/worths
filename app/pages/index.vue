@@ -55,18 +55,17 @@ const periodGrowth = computed(() => getGrowthForPeriod(startDate.value))
     <template #body>
       <div class="space-y-6">
         <div class="flex flex-col md:flex-row gap-6">
-          <DashboardNetWorthCard :current-net-worth="currentNetWorth" :total-assets="totalAssets"
-            :total-liabilities="totalLiabilities" :period-growth="periodGrowth" />
+          <DashboardNetWorthCard 
+            :current-net-worth="currentNetWorth" 
+            :total-assets="totalAssets"
+            :total-liabilities="totalLiabilities" 
+            :period-growth="periodGrowth"
+            :start-date="startDate"
+          />
 
           <DashboardAssetCategoriesCard />
         </div>
-
-        <UCard variant="soft">
-          <template #header>
-            <div class="text-lg font-bold">Net Worth Trend</div>
-          </template>
-          <NetWorthChart :start-date="startDate" />
-        </UCard>
+        
         <div class="flex flex-col md:flex-row gap-6">
           <DashboardAssetsListCard />
           <DashboardLiabilitiesListCard />
