@@ -80,7 +80,7 @@ const handleBalanceUpdated = async () => {
       </div>
 
       <!-- Balance History Chart -->
-      <UCard variant="soft">
+      <UCard variant="outline" class="shadow-sm">
         <template #header>
           <div class="text-lg font-bold">Balance Trend</div>
         </template>
@@ -95,7 +95,7 @@ const handleBalanceUpdated = async () => {
       </UCard>
 
       <!-- Balance History Table -->
-      <UCard variant="soft">
+      <UCard variant="outline" class="shadow-sm">
         <template #header>
           <div class="text-lg font-bold">Balance History</div>
         </template>

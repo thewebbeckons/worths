@@ -75,7 +75,7 @@ const topCategory = computed(() => {
 </script>
 
 <template>
-  <UCard class="md:w-1/2" variant="soft">
+  <UCard class="md:w-1/2 shadow-sm" variant="outline">
     <div class="flex flex-col h-full">
       <!-- Header with Subtitle -->
       <div class="mb-4">

@@ -21,7 +21,7 @@ const accordionItems = computed(() =>
 </script>
 
 <template>
-  <UCard class="md:w-1/2" variant="soft">
+  <UCard class="md:w-1/2 shadow-sm" variant="outline">
     <div v-if="accordionItems.length > 0" class="space-y-2">
       <div class="flex justify-between items-center mb-3">
         <h2 class="text-xl uppercase font-bold">Liabilities</h2>
@@ -32,7 +32,7 @@ const accordionItems = computed(() =>
         <!-- Single item: show directly without accordion -->
         <div
           v-if="item.accounts.length === 1"
-          class="flex justify-between items-center py-3 px-4 bg-elevated rounded-lg"
+          class="flex justify-between items-center py-3 px-4 bg-muted rounded-lg"
         >
           <div class="flex items-center gap-3">
             <OwnerBadge v-if="item.accounts[0]?.owner" :name="item.accounts[0]?.owner" :color="item.accounts[0]?.ownerColor" />
@@ -52,7 +52,7 @@ const accordionItems = computed(() =>
           v-else
           :items="[item]"
           type="multiple"
-          :ui="{ root: 'bg-elevated rounded-lg', item: 'px-4' }"
+          :ui="{ root: 'bg-muted rounded-lg', item: 'px-4' }"
         >
           <template #default="{ item: accordionItem }">
             <UButton

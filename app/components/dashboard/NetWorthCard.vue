@@ -93,7 +93,7 @@ const tooltipTemplate = (d: typeof chartData.value[0]) => {
 </script>
 
 <template>
-  <UCard class="md:w-1/2 relative overflow-hidden" variant="soft">
+  <UCard class="md:w-1/2 relative overflow-hidden shadow-sm" variant="outline">
     <div class="relative flex flex-col h-full">
       <!-- Top Section: Net Worth + Growth Indicator -->
       <div class="mb-4">

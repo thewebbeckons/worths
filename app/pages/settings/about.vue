@@ -5,7 +5,7 @@ const githubUrl = 'https://github.com/thewebbeckons/worths'
 <template>
   <div class="space-y-8">
     <!-- About Section -->
-    <UCard variant="soft">
+    <UCard variant="outline" class="shadow-sm">
       <template #header>
         <div class="flex items-center gap-3">
           <UIcon name="i-lucide-piggy-bank" class="text-3xl text-primary" />

@@ -127,7 +127,7 @@ const exportToCsv = () => {
 </script>
 
 <template>
-  <UCard variant="soft">
+  <UCard variant="outline" class="shadow-sm">
     <template #header>
       <div class="flex items-center justify-between">
         <div>

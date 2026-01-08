@@ -62,7 +62,7 @@ const onImportClick = () => {
   <ClientOnly v-else>
     <div class="space-y-8">
       <!-- Data Management Section -->
-      <UCard variant="soft">
+      <UCard variant="outline" class="shadow-sm">
         <template #header>
           <h2 class="text-xl font-semibold">Data Management</h2>
           <p class="text-sm text-muted-foreground">Export or import your complete financial data via JSON files.</p>

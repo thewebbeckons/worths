@@ -106,7 +106,7 @@ const bankOptions = computed(() => {
           </div>
         </div>
         
-        <UCard variant="soft">
+        <UCard variant="outline" class="shadow-sm">
           <AccountList 
             :search-query="searchQuery"
             :category-filter="categoryFilter"

@@ -89,7 +89,7 @@ async function onDeleteCategory() {
   <ClientOnly v-else>
     <div class="space-y-8">
       <!-- Profile Section -->
-      <UCard variant="soft">
+      <UCard variant="outline" class="shadow-sm">
         <template #header>
           <div class="flex items-center justify-between">
             <div>
@@ -206,7 +206,7 @@ async function onDeleteCategory() {
       </UCard>
 
       <!-- Account Categories Section -->
-      <UCard variant="soft">
+      <UCard variant="outline" class="shadow-sm">
         <template #header>
           <div class="flex items-center justify-between">
             <div>
