@@ -17,9 +17,3 @@
   --color-green-950: #052E16;
 
 }
-
-:root {
-  .visualization-container-div {
-    --vis-tooltip-background-color: transparent;
-  }
-}
