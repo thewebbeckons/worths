@@ -1,41 +1,53 @@
 <script setup lang="ts">
-const { getAccountsGroupedByCategory, totalLiabilities } = useNetWorth();
+const { getAccountsGroupedByCategory } = useNetWorth()
 
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(value);
-};
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD'
+  }).format(value)
+}
 
 // Get grouped liabilities
 const liabilityGroups = computed(() =>
-  getAccountsGroupedByCategory("liability")
-);
+  getAccountsGroupedByCategory('liability')
+)
 
 // Transform to accordion items format
 const accordionItems = computed(() =>
-  liabilityGroups.value.map((group) => ({
+  liabilityGroups.value.map(group => ({
     label: group.category,
     value: group.category,
-    content: "", // We'll use custom slot
+    content: '', // We'll use custom slot
     total: group.total,
-    accounts: group.accounts,
+    accounts: group.accounts
   }))
-);
+)
 </script>
 
 <template>
-  <UCard class="md:w-1/2 shadow-sm" variant="outline">
-    <div v-if="accordionItems.length > 0" class="space-y-2">
+  <UCard
+    class="md:w-1/2 shadow-sm"
+    variant="outline"
+  >
+    <div
+      v-if="accordionItems.length > 0"
+      class="space-y-2"
+    >
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xl uppercase font-bold">Liabilities</h2>
-        <NuxtLink to="/accounts" class="text-sm text-primary hover:underline"
-          >View More</NuxtLink
-        >
+        <h2 class="text-xl uppercase font-bold">
+          Liabilities
+        </h2>
+        <NuxtLink
+          to="/accounts"
+          class="text-sm text-primary hover:underline"
+        >View More</NuxtLink>
       </div>
 
-      <template v-for="item in accordionItems" :key="item.value">
+      <template
+        v-for="item in accordionItems"
+        :key="item.value"
+      >
         <!-- Single item: show directly without accordion -->
         <div
           v-if="item.accounts.length === 1"
@@ -84,9 +96,7 @@ const accordionItems = computed(() =>
             >
               <div class="flex flex-col items-start">
                 <span class="font-medium">{{ accordionItem.label }}</span>
-                <span class="text-xs text-neutral-500 dark:text-neutral-400"
-                  >{{ accordionItem.accounts.length }} accounts</span
-                >
+                <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ accordionItem.accounts.length }} accounts</span>
               </div>
             </UButton>
           </template>
@@ -114,7 +124,7 @@ const accordionItems = computed(() =>
                 class="iconify i-lucide:chevron-down shrink-0 size-5 group-data-[state=open]:rotate-180 transition-transform duration-200"
                 aria-hidden="true"
                 data-slot="trailingIcon"
-              ></span>
+              />
             </div>
           </template>
 
@@ -135,8 +145,7 @@ const accordionItems = computed(() =>
                     <span class="font-medium text-sm">{{ account.name }}</span>
                     <span
                       class="text-xs text-neutral-500 dark:text-neutral-400"
-                      >{{ account.bank }}</span
-                    >
+                    >{{ account.bank }}</span>
                   </div>
                 </div>
                 <span
@@ -163,7 +172,10 @@ const accordionItems = computed(() =>
       </template>
     </div>
 
-    <div v-else class="text-neutral-500 dark:text-neutral-400 text-center py-8">
+    <div
+      v-else
+      class="text-neutral-500 dark:text-neutral-400 text-center py-8"
+    >
       No liability accounts found
     </div>
   </UCard>

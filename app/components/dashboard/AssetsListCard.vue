@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { getAccountsGroupedByCategory, totalAssets } = useNetWorth()
+const { getAccountsGroupedByCategory } = useNetWorth()
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
@@ -9,7 +9,7 @@ const formatCurrency = (value: number) => {
 const assetGroups = computed(() => getAccountsGroupedByCategory('asset'))
 
 // Transform to accordion items format
-const accordionItems = computed(() => 
+const accordionItems = computed(() =>
   assetGroups.value.map(group => ({
     label: group.category,
     value: group.category,
@@ -21,31 +21,52 @@ const accordionItems = computed(() =>
 </script>
 
 <template>
-  <UCard class="md:w-1/2 shadow-sm" variant="outline">
-    <div v-if="accordionItems.length > 0" class="space-y-2">
+  <UCard
+    class="md:w-1/2 shadow-sm"
+    variant="outline"
+  >
+    <div
+      v-if="accordionItems.length > 0"
+      class="space-y-2"
+    >
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xl uppercase font-bold">Assets</h2>
-        <NuxtLink to="/accounts" class="text-sm text-primary hover:underline">View More</NuxtLink>
+        <h2 class="text-xl uppercase font-bold">
+          Assets
+        </h2>
+        <NuxtLink
+          to="/accounts"
+          class="text-sm text-primary hover:underline"
+        >View More</NuxtLink>
       </div>
-      
-      <template v-for="item in accordionItems" :key="item.value">
+
+      <template
+        v-for="item in accordionItems"
+        :key="item.value"
+      >
         <!-- Single item: show directly without accordion -->
         <div
           v-if="item.accounts.length === 1"
           class="flex justify-between items-center py-3 px-4 bg-muted shadow-xs rounded-lg"
         >
           <div class="flex items-center gap-3">
-            <OwnerBadge v-if="item.accounts[0]?.owner" :name="item.accounts[0]?.owner ?? ''" :color="item.accounts[0]?.ownerColor" />
+            <OwnerBadge
+              v-if="item.accounts[0]?.owner"
+              :name="item.accounts[0]?.owner ?? ''"
+              :color="item.accounts[0]?.ownerColor"
+            />
             <div class="flex flex-col">
               <span class="font-medium">{{ item.label }}</span>
               <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ item.accounts[0]?.bank }}</span>
             </div>
           </div>
-          <span :class="item.total >= 0 ? 'text-primary' : 'text-error'" class="font-semibold">
+          <span
+            :class="item.total >= 0 ? 'text-primary' : 'text-error'"
+            class="font-semibold"
+          >
             {{ formatCurrency(item.total) }}
           </span>
         </div>
-        
+
         <!-- Multiple items: use accordion -->
         <UAccordion
           v-else
@@ -71,10 +92,14 @@ const accordionItems = computed(() =>
               <span class="text-primary font-semibold">
                 {{ formatCurrency(accordionItem.total) }}
               </span>
-              <span class="iconify i-lucide:chevron-down shrink-0 size-5 group-data-[state=open]:rotate-180 transition-transform duration-200" aria-hidden="true" data-slot="trailingIcon"></span>
+              <span
+                class="iconify i-lucide:chevron-down shrink-0 size-5 group-data-[state=open]:rotate-180 transition-transform duration-200"
+                aria-hidden="true"
+                data-slot="trailingIcon"
+              />
             </div>
           </template>
-          
+
           <template #body="{ item: accordionItem }">
             <div class="space-y-1 pb-2">
               <div
@@ -83,13 +108,20 @@ const accordionItems = computed(() =>
                 class="flex justify-between items-center py-2 px-3 rounded-lg"
               >
                 <div class="flex items-center gap-2">
-                  <OwnerBadge :name="account.owner" :color="account.ownerColor" size="sm" />
+                  <OwnerBadge
+                    :name="account.owner"
+                    :color="account.ownerColor"
+                    size="sm"
+                  />
                   <div class="flex flex-col">
                     <span class="font-medium text-sm">{{ account.name }}</span>
                     <span class="text-xs text-neutral-500 dark:text-neutral-400">{{ account.bank }}</span>
                   </div>
                 </div>
-                <span :class="account.balance >= 0 ? 'text-primary' : 'text-error'" class="font-medium">
+                <span
+                  :class="account.balance >= 0 ? 'text-primary' : 'text-error'"
+                  class="font-medium"
+                >
                   {{ formatCurrency(account.balance) }}
                 </span>
               </div>
@@ -99,7 +131,10 @@ const accordionItems = computed(() =>
       </template>
     </div>
 
-    <div v-else class="text-neutral-500 dark:text-neutral-400 text-center py-8">
+    <div
+      v-else
+      class="text-neutral-500 dark:text-neutral-400 text-center py-8"
+    >
       No asset accounts found
     </div>
   </UCard>
