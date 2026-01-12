@@ -78,7 +78,9 @@ const periodGrowth = computed<PeriodGrowth>(() => {
   const startValue = data[0]?.netWorth ?? 0
   const endValue = data[data.length - 1]?.netWorth ?? 0
   const growth = endValue - startValue
-  const percentage = startValue !== 0 ? (growth / Math.abs(startValue)) * 100 : 0
+  const percentage = startValue !== 0
+    ? (growth / Math.abs(startValue)) * 100
+    : (endValue !== 0 ? 100 : 0)
 
   return { growth, percentage }
 })
