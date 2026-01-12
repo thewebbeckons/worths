@@ -6,7 +6,7 @@ const props = defineProps<{
   name: string
   color?: string
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-  ownerType?: OwnerType  // If provided, used to determine if joint display is needed
+  ownerType?: OwnerType // If provided, used to determine if joint display is needed
 }>()
 
 const { profile } = useDatabase()
@@ -80,7 +80,10 @@ const spouseColorClass = computed(() => `bg-${profile.value?.spouseColor || 'sec
 
 <template>
   <!-- Joint account: show two overlapping circles -->
-  <div v-if="isJoint" class="inline-flex items-center shrink-0">
+  <div
+    v-if="isJoint"
+    class="inline-flex items-center shrink-0"
+  >
     <div
       class="inline-flex items-center justify-center rounded-full text-white font-medium ring-2 ring-background"
       :class="[jointSizeClasses, userColorClass]"
@@ -94,7 +97,7 @@ const spouseColorClass = computed(() => `bg-${profile.value?.spouseColor || 'sec
       {{ spouseInitials }}
     </div>
   </div>
-  
+
   <!-- Single owner: show single badge -->
   <div
     v-else

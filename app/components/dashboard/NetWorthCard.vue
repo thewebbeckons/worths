@@ -17,19 +17,58 @@ defineProps<{
 
 const { monthlySnapshots } = useNetWorth()
 
+const periodOptions = ['1M', '3M', '6M']
+const selectedPeriod = useStorage('networth-card-period', '1M')
+
+const formatMonth = (date: Date) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  return `${year}-${month}`
+}
+
+const getMonthsInPeriod = (monthsCount: number) => {
+  const now = new Date()
+  const months: string[] = []
+
+  for (let offset = monthsCount - 1; offset >= 0; offset -= 1) {
+    const date = new Date(now.getFullYear(), now.getMonth() - offset, 1)
+    months.push(formatMonth(date))
+  }
+
+  return months
+}
+
+const selectedMonthsCount = computed(() => {
+  switch (selectedPeriod.value) {
+    case '6M':
+      return 6
+    case '3M':
+      return 3
+    default:
+      return 2
+  }
+})
+
 // Transform snapshots for the chart
 const chartData = computed(() => {
-  // Filter to only include months with actual balances (non-zero assets or liabilities)
-  const snapshots = monthlySnapshots.value.filter(s => s.assetsTotal > 0 || s.liabilitiesTotal > 0)
+  const snapshotMap = new Map(monthlySnapshots.value.map(snapshot => [snapshot.month, snapshot]))
+  const months = getMonthsInPeriod(selectedMonthsCount.value)
 
-  return snapshots.map((s, index) => ({
-    x: index,
-    assets: s.assetsTotal,
-    liabilities: s.liabilitiesTotal,
-    netWorth: s.netWorth,
-    month: s.month,
-    formattedDate: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(parseLocalDate(`${s.month}-01`))
-  }))
+  return months.map((month, index) => {
+    const snapshot = snapshotMap.get(month)
+    const assets = snapshot?.assetsTotal ?? 0
+    const liabilities = snapshot?.liabilitiesTotal ?? 0
+    const netWorth = snapshot?.netWorth ?? 0
+
+    return {
+      x: index,
+      assets,
+      liabilities,
+      netWorth,
+      month,
+      formattedDate: new Intl.DateTimeFormat('en-US', { month: 'short' }).format(parseLocalDate(`${month}-01`))
+    }
+  })
 })
 // Get unique month labels for x-axis ticks
 const uniqueMonthIndices = computed(() => {
@@ -98,28 +137,35 @@ const tooltipTemplate = (d: typeof chartData.value[0]) => {
   >
     <div class="relative flex flex-col h-full">
       <!-- Top Section: Net Worth + Growth Indicator -->
-      <div class="mb-4">
-        <div class="text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
-          Net Worth
-        </div>
-        <div class="text-3xl font-bold text-neutral-900 dark:text-white">
-          {{ formatCurrency(currentNetWorth) }}
-        </div>
+      <div class="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <div class="text-sm font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400">
+            Net Worth
+          </div>
+          <div class="text-3xl font-bold text-neutral-900 dark:text-white">
+            {{ formatCurrency(currentNetWorth) }}
+          </div>
 
-        <!-- Growth Indicator (Below Net Worth) -->
-        <div
-          v-if="periodGrowth.growth !== 0"
-          class="flex items-center gap-1.5 mt-1 text-sm font-medium"
-          :class="periodGrowth.growth >= 0 ? 'text-green-500' : 'text-red-500'"
-        >
-          <UIcon
-            :name="periodGrowth.growth >= 0 ? 'i-heroicons-arrow-trending-up' : 'i-heroicons-arrow-trending-down'"
-            class="w-4 h-4"
-          />
-          <span>{{ periodGrowth.growth >= 0 ? '+' : '' }}{{ formatCurrency(periodGrowth.growth) }}</span>
-          <span class="opacity-70">({{ periodGrowth.growth >= 0 ? '+' : '' }}{{ periodGrowth.percentage.toFixed(1)
-          }}%)</span>
+          <!-- Growth Indicator (Below Net Worth) -->
+          <div
+            v-if="periodGrowth.growth !== 0"
+            class="flex items-center gap-1.5 mt-1 text-sm font-medium"
+            :class="periodGrowth.growth >= 0 ? 'text-green-500' : 'text-red-500'"
+          >
+            <UIcon
+              :name="periodGrowth.growth >= 0 ? 'i-heroicons-arrow-trending-up' : 'i-heroicons-arrow-trending-down'"
+              class="w-4 h-4"
+            />
+            <span>{{ periodGrowth.growth >= 0 ? '+' : '' }}{{ formatCurrency(periodGrowth.growth) }}</span>
+            <span class="opacity-70">({{ periodGrowth.growth >= 0 ? '+' : '' }}{{ periodGrowth.percentage.toFixed(1)
+            }}%)</span>
+          </div>
         </div>
+        <USelect
+          v-model="selectedPeriod"
+          :items="periodOptions"
+          class="w-20"
+        />
       </div>
 
       <!-- Chart Section -->

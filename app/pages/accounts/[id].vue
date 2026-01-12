@@ -6,9 +6,13 @@ const { accounts, getBalanceHistory } = useNetWorth()
 
 const accountId = route.params.id as string
 const account = computed(() => accounts.value.find(a => a.id === accountId))
+const notesText = computed(() => {
+  if (!account.value?.notes) return ''
+  return account.value.notes.replace(/<[^>]*>/g, '')
+})
 
 // Load balance history asynchronously
-const balanceHistory = ref<{ date: string; value: number }[]>([])
+const balanceHistory = ref<{ date: string, value: number }[]>([])
 const isLoading = ref(true)
 const loadError = ref<string | null>(null)
 
@@ -63,46 +67,100 @@ const handleBalanceUpdated = async () => {
 
 <template>
   <UContainer class="py-6 space-y-6">
-    <div v-if="account" class="space-y-6">
-      <UButton variant="link" icon="i-heroicons-arrow-left" to="/accounts" class="p-0 mb-2">Back to Accounts</UButton>
+    <div
+      v-if="account"
+      class="space-y-6"
+    >
+      <UButton
+        variant="link"
+        icon="i-heroicons-arrow-left"
+        to="/accounts"
+        class="p-0 mb-2"
+      >
+        Back to Accounts
+      </UButton>
       <div class="flex justify-between items-start gap-4">
-        <div class="space-y-2 flex-1">          
-          <h1 class="text-3xl font-bold">{{ account.name }}</h1>
+        <div class="space-y-2 flex-1">
+          <h1 class="text-3xl font-bold">
+            {{ account.name }}
+          </h1>
           <div class="flex gap-2 text-gray-500">
-            <UBadge color="neutral">{{ account.category }}</UBadge>
-            <UBadge color="neutral" variant="outline">{{ account.owner }}</UBadge>
-            <UBadge :color="account.type === 'asset' ? 'success' : 'error'" variant="soft">
+            <UBadge color="neutral">
+              {{ account.category }}
+            </UBadge>
+            <UBadge
+              color="neutral"
+              variant="outline"
+            >
+              {{ account.owner }}
+            </UBadge>
+            <UBadge
+              :color="account.type === 'asset' ? 'success' : 'error'"
+              variant="soft"
+            >
               {{ account.type === 'asset' ? 'Asset' : 'Liability' }}
             </UBadge>
           </div>
         </div>
-        
+
         <!-- Notes Card -->
-        <UCard v-if="account.notes" variant="subtle" class="max-w-sm">
+        <UCard
+          v-if="account.notes"
+          variant="subtle"
+          class="max-w-sm"
+        >
           <template #header>
             <div class="flex items-center gap-2 text-sm font-medium text-muted">
-              <UIcon name="i-lucide-sticky-note" class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-sticky-note"
+                class="w-4 h-4"
+              />
               Notes
             </div>
           </template>
-          <div class="text-sm prose prose-sm dark:prose-invert max-w-none" v-html="account.notes" />
+          <div class="text-sm prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+            {{ notesText }}
+          </div>
         </UCard>
-        
+
         <div class="flex gap-2 shrink-0">
-          <UButton label="Update Balance" @click="isUpdateBalanceModalOpen = true" icon="i-lucide-circle-dollar-sign" variant="soft" />
-          <UButton label="Edit Account" @click="isEditModalOpen = true" icon="i-lucide-square-pen" />
+          <UButton
+            label="Update Balance"
+            icon="i-lucide-circle-dollar-sign"
+            variant="soft"
+            @click="isUpdateBalanceModalOpen = true"
+          />
+          <UButton
+            label="Edit Account"
+            icon="i-lucide-square-pen"
+            @click="isEditModalOpen = true"
+          />
         </div>
       </div>
 
       <!-- Balance History Chart -->
-      <UCard variant="outline" class="shadow-sm">
+      <UCard
+        variant="outline"
+        class="shadow-sm"
+      >
         <template #header>
-          <div class="text-lg font-bold">Balance Trend</div>
+          <div class="text-lg font-bold">
+            Balance Trend
+          </div>
         </template>
-        <div v-if="isLoading" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-gray-500" />
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-8"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="animate-spin text-2xl text-gray-500"
+          />
         </div>
-        <div v-else-if="loadError" class="text-center py-8 text-error">
+        <div
+          v-else-if="loadError"
+          class="text-center py-8 text-error"
+        >
           {{ loadError }}
         </div>
         <BalanceHistoryChart
@@ -113,42 +171,67 @@ const handleBalanceUpdated = async () => {
       </UCard>
 
       <!-- Balance History Table -->
-      <UCard variant="outline" class="shadow-sm">
+      <UCard
+        variant="outline"
+        class="shadow-sm"
+      >
         <template #header>
-          <div class="text-lg font-bold">Balance History</div>
+          <div class="text-lg font-bold">
+            Balance History
+          </div>
         </template>
-        <div v-if="isLoading" class="flex justify-center py-8">
-          <UIcon name="i-lucide-loader-2" class="animate-spin text-2xl text-gray-500" />
+        <div
+          v-if="isLoading"
+          class="flex justify-center py-8"
+        >
+          <UIcon
+            name="i-lucide-loader-2"
+            class="animate-spin text-2xl text-gray-500"
+          />
         </div>
-        <div v-else-if="loadError" class="text-center py-8 text-error">
+        <div
+          v-else-if="loadError"
+          class="text-center py-8 text-error"
+        >
           {{ loadError }}
         </div>
-        <div v-else-if="historyRows.length === 0" class="text-center py-8 text-gray-500">
+        <div
+          v-else-if="historyRows.length === 0"
+          class="text-center py-8 text-gray-500"
+        >
           No balance history yet
         </div>
-        <UTable v-else :columns="historyColumns" :data="historyRows" />
+        <UTable
+          v-else
+          :columns="historyColumns"
+          :data="historyRows"
+        />
       </UCard>
-      
+
       <!-- Edit Account Modal -->
       <UModal v-model:open="isEditModalOpen">
         <template #content>
           <div class="p-4">
-            <h3 class="text-lg font-bold mb-4">Edit Account</h3>
-            <EditAccountForm 
-              :account="account" 
+            <h3 class="text-lg font-bold mb-4">
+              Edit Account
+            </h3>
+            <EditAccountForm
+              :account="account"
               @close="isEditModalOpen = false"
               @saved="handleAccountSaved"
             />
           </div>
         </template>
       </UModal>
-      
+
       <!-- Update Balance Modal -->
       <UModal v-model:open="isUpdateBalanceModalOpen">
         <template #content>
           <div class="p-4">
-            <h3 class="text-lg font-bold mb-4">Update Balance</h3>
-            <UpdateBalanceForm 
+            <h3 class="text-lg font-bold mb-4">
+              Update Balance
+            </h3>
+            <UpdateBalanceForm
               :preselected-account-id="accountId"
               @close="isUpdateBalanceModalOpen = false"
               @saved="handleBalanceUpdated"
@@ -156,12 +239,20 @@ const handleBalanceUpdated = async () => {
           </div>
         </template>
       </UModal>
-      
     </div>
-    <div v-else class="text-center py-10">
-      <p class="text-gray-500">Account not found</p>
-      <UButton to="/accounts" class="mt-4">Go Back</UButton>
+    <div
+      v-else
+      class="text-center py-10"
+    >
+      <p class="text-gray-500">
+        Account not found
+      </p>
+      <UButton
+        to="/accounts"
+        class="mt-4"
+      >
+        Go Back
+      </UButton>
     </div>
   </UContainer>
 </template>
-

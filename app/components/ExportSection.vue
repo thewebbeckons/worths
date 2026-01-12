@@ -10,14 +10,14 @@ const excludedAccountIds = ref<Set<string>>(new Set())
 // Group accounts by category for display
 const accountsByCategory = computed(() => {
   const grouped: Record<string, typeof accounts.value> = {}
-  
+
   for (const acc of accounts.value) {
     if (!grouped[acc.category]) {
       grouped[acc.category] = []
     }
     grouped[acc.category]!.push(acc)
   }
-  
+
   return grouped
 })
 
@@ -37,7 +37,7 @@ const isCategoryExcluded = (categoryName: string): boolean => {
 const toggleCategory = (categoryName: string) => {
   const catId = getCategoryId(categoryName)
   if (catId === undefined) return
-  
+
   const newSet = new Set(excludedCategoryIds.value)
   if (newSet.has(catId)) {
     newSet.delete(catId)
@@ -65,7 +65,7 @@ const toggleAccount = (accountId: string) => {
 
 // Get filtered accounts based on exclusions
 const filteredAccounts = computed(() => {
-  return accounts.value.filter(acc => {
+  return accounts.value.filter((acc) => {
     if (excludedAccountIds.value.has(acc.id)) {
       return false
     }
@@ -94,7 +94,7 @@ const exportToCsv = () => {
   const today = new Date().toISOString().slice(0, 10)
   const header = 'date,name,bank,category,owner,balance'
 
-  const rows = filteredAccounts.value.map(account => {
+  const rows = filteredAccounts.value.map((account) => {
     const escapeCsvField = (field: string) => {
       if (field.includes(',') || field.includes('"') || field.includes('\n')) {
         return `"${field.replace(/"/g, '""')}"`
@@ -129,12 +129,19 @@ const exportToCsv = () => {
 </script>
 
 <template>
-  <UCard variant="outline" class="shadow-sm">
+  <UCard
+    variant="outline"
+    class="shadow-sm"
+  >
     <template #header>
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-base font-semibold">Export Accounts</h3>
-          <p class="text-sm text-muted">Export your account balances to CSV to use in excel or google sheets</p>
+          <h3 class="text-base font-semibold">
+            Export Accounts
+          </h3>
+          <p class="text-sm text-muted">
+            Export your account balances to CSV to use in excel or google sheets
+          </p>
         </div>
         <div class="flex items-center gap-2">
           <UButton
@@ -157,9 +164,14 @@ const exportToCsv = () => {
     </template>
 
     <div class="space-y-4">
-    <p class="text-sm text-muted">Click on an account to exclude it from the export</p>
+      <p class="text-sm text-muted">
+        Click on an account to exclude it from the export
+      </p>
       <!-- Export count indicator -->
-      <p class="text-sm" :class="exportCount < totalCount ? 'text-warning' : 'text-muted'">
+      <p
+        class="text-sm"
+        :class="exportCount < totalCount ? 'text-warning' : 'text-muted'"
+      >
         <template v-if="exportCount < totalCount">
           Exporting {{ exportCount }} of {{ totalCount }} accounts
         </template>
@@ -170,7 +182,9 @@ const exportToCsv = () => {
 
       <!-- Categories section -->
       <div class="space-y-2">
-        <h4 class="text-sm font-medium">Exclude by Category</h4>
+        <h4 class="text-sm font-medium">
+          Exclude by Category
+        </h4>
         <div class="flex flex-wrap gap-2">
           <UButton
             v-for="cat in Object.keys(accountsByCategory)"
@@ -186,10 +200,18 @@ const exportToCsv = () => {
 
       <!-- Accounts section -->
       <div class="space-y-2">
-        <h4 class="text-sm font-medium">Exclude by Account</h4>
+        <h4 class="text-sm font-medium">
+          Exclude by Account
+        </h4>
         <div class="space-y-3">
-          <div v-for="(accs, category) in accountsByCategory" :key="category" class="space-y-1">
-            <p class="text-xs text-muted font-medium">{{ category }}</p>
+          <div
+            v-for="(accs, category) in accountsByCategory"
+            :key="category"
+            class="space-y-1"
+          >
+            <p class="text-xs text-muted font-medium">
+              {{ category }}
+            </p>
             <div class="flex flex-wrap gap-1">
               <UButton
                 v-for="acc in accs"

@@ -68,23 +68,40 @@ const onResetApp = async () => {
 </script>
 
 <template>
-  <div v-if="!isReady" class="flex items-center justify-center py-20">
-    <UIcon name="i-lucide-loader-2" class="animate-spin text-4xl" />
+  <div
+    v-if="!isReady"
+    class="flex items-center justify-center py-20"
+  >
+    <UIcon
+      name="i-lucide-loader-2"
+      class="animate-spin text-4xl"
+    />
   </div>
 
   <ClientOnly v-else>
     <div class="space-y-8">
       <!-- Data Management Section -->
-      <UCard variant="outline" class="shadow-sm">
+      <UCard
+        variant="outline"
+        class="shadow-sm"
+      >
         <template #header>
-          <h2 class="text-xl font-semibold">Data Management</h2>
-          <p class="text-sm text-muted-foreground">Export or import your complete financial data via JSON files.</p>
+          <h2 class="text-xl font-semibold">
+            Data Management
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Export or import your complete financial data via JSON files.
+          </p>
         </template>
 
         <div class="flex flex-wrap gap-4">
           <div class="flex-1 min-w-[200px]">
-            <h3 class="font-medium mb-1">Export Data</h3>
-            <p class="text-sm text-muted-foreground mb-3">Download a full backup of all your accounts, balances, and snapshots.</p>
+            <h3 class="font-medium mb-1">
+              Export Data
+            </h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Download a full backup of all your accounts, balances, and snapshots.
+            </p>
             <UButton
               icon="i-lucide-download"
               label="Export to JSON"
@@ -94,8 +111,12 @@ const onResetApp = async () => {
           </div>
 
           <div class="flex-1 min-w-[200px]">
-            <h3 class="font-medium mb-1">Import Data</h3>
-            <p class="text-sm text-muted-foreground mb-3">Restore from a JSON backup. This will replace all current data.</p>
+            <h3 class="font-medium mb-1">
+              Import Data
+            </h3>
+            <p class="text-sm text-muted-foreground mb-3">
+              Restore from a JSON backup. This will replace all current data.
+            </p>
             <UButton
               icon="i-lucide-upload"
               label="Import from JSON"
@@ -111,15 +132,26 @@ const onResetApp = async () => {
       <ExportSection />
 
       <!-- Danger Zone Section -->
-      <UPageCard variant="soft" highlight highlightColor="error" :ui="{ root: 'bg-error/5 dark:bg-error/5' }">
+      <UPageCard
+        variant="soft"
+        highlight
+        highlight-color="error"
+        :ui="{ root: 'bg-error/5 dark:bg-error/5' }"
+      >
         <template #header>
-          <h2 class="text-xl font-semibold text-red-600 dark:text-red-400">Danger Zone</h2>
-          <p class="text-sm text-muted-foreground">Irreversible actions that affect your data.</p>
+          <h2 class="text-xl font-semibold text-red-600 dark:text-red-400">
+            Danger Zone
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Irreversible actions that affect your data.
+          </p>
         </template>
 
         <template #body>
           <div>
-            <h3 class="font-medium mb-1">Reset Application</h3>
+            <h3 class="font-medium mb-1">
+              Reset Application
+            </h3>
             <p class="text-sm text-muted-foreground mb-4">
               Permanently delete all accounts, history, and settings from this browser. This cannot be undone.
             </p>
@@ -134,7 +166,10 @@ const onResetApp = async () => {
     </div>
 
     <!-- Reset Confirmation Modal -->
-    <UModal v-model:open="isResetModalOpen" title="Reset Application?">
+    <UModal
+      v-model:open="isResetModalOpen"
+      title="Reset Application?"
+    >
       <template #body>
         <UAlert
           icon="i-lucide-alert-triangle"
@@ -146,12 +181,20 @@ const onResetApp = async () => {
         />
         <p>Type <strong>RESET</strong> below to confirm.</p>
         <div class="mt-4">
-          <UInput v-model="resetConfirmText" placeholder="RESET" />
+          <UInput
+            v-model="resetConfirmText"
+            placeholder="RESET"
+          />
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Cancel" color="neutral" variant="ghost" @click="isResetModalOpen = false" />
+          <UButton
+            label="Cancel"
+            color="neutral"
+            variant="ghost"
+            @click="isResetModalOpen = false"
+          />
           <UButton
             label="Delete Everything"
             color="error"

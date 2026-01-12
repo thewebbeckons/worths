@@ -4,7 +4,7 @@ import { CurveType } from '@unovis/ts'
 import { formatCurrency, formatCompactCurrency, parseLocalDate } from '~/utils/format'
 
 const props = defineProps<{
-  balanceHistory: { date: string; value: number }[]
+  balanceHistory: { date: string, value: number }[]
   accountType?: 'asset' | 'liability'
   monthsToShow?: number
 }>()
@@ -15,7 +15,7 @@ const filteredHistory = computed(() => {
   const cutoffDate = new Date()
   cutoffDate.setMonth(cutoffDate.getMonth() - months)
 
-  return props.balanceHistory.filter(item => {
+  return props.balanceHistory.filter((item) => {
     const itemDate = parseLocalDate(item.date)
     return itemDate >= cutoffDate
   })
@@ -65,11 +65,18 @@ const tooltipTemplate = (d: typeof data.value[0]) => {
 
 <template>
   <div class="w-full">
-    <div v-if="data.length > 0" class="h-[250px]">
-      <VisXYContainer :data="data" :height="250" :margin="{ top: 10, right: 10, bottom: 10, left: 10 }">
-        <VisArea 
-          :x="x" 
-          :y="y" 
+    <div
+      v-if="data.length > 0"
+      class="h-[250px]"
+    >
+      <VisXYContainer
+        :data="data"
+        :height="250"
+        :margin="{ top: 10, right: 10, bottom: 10, left: 10 }"
+      >
+        <VisArea
+          :x="x"
+          :y="y"
           :color="color"
           :opacity="0.3"
           :curve-type="CurveType.MonotoneX"
@@ -109,7 +116,10 @@ const tooltipTemplate = (d: typeof data.value[0]) => {
         <VisCrosshair :template="tooltipTemplate" />
       </VisXYContainer>
     </div>
-    <div v-else class="h-full flex items-center justify-center text-gray-500 py-8">
+    <div
+      v-else
+      class="h-full flex items-center justify-center text-gray-500 py-8"
+    >
       No balance history available
     </div>
   </div>

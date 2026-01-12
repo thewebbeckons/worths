@@ -2,12 +2,12 @@
 import { useDatabase } from '~/composables/useDatabase'
 import type { DbCategory } from '~/types/db'
 
-const { 
-  profile, 
+const {
+  profile,
   categories,
-  updateProfile, 
+  updateProfile,
   deleteCategory,
-  isReady 
+  isReady
 } = useDatabase()
 
 const toast = useToast()
@@ -82,19 +82,32 @@ async function onDeleteCategory() {
 </script>
 
 <template>
-  <div v-if="!isReady" class="flex items-center justify-center py-20">
-    <UIcon name="i-lucide-loader-2" class="animate-spin text-4xl" />
+  <div
+    v-if="!isReady"
+    class="flex items-center justify-center py-20"
+  >
+    <UIcon
+      name="i-lucide-loader-2"
+      class="animate-spin text-4xl"
+    />
   </div>
 
   <ClientOnly v-else>
     <div class="space-y-8">
       <!-- Profile Section -->
-      <UCard variant="outline" class="shadow-sm">
+      <UCard
+        variant="outline"
+        class="shadow-sm"
+      >
         <template #header>
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-xl font-semibold">Profile</h2>
-              <p class="text-sm text-muted-foreground">Set your name and optionally add a spouse/partner.</p>
+              <h2 class="text-xl font-semibold">
+                Profile
+              </h2>
+              <p class="text-sm text-muted-foreground">
+                Set your name and optionally add a spouse/partner.
+              </p>
             </div>
             <UButton
               v-if="!isEditingProfile"
@@ -105,7 +118,10 @@ async function onDeleteCategory() {
           </div>
         </template>
 
-        <div v-if="!isEditingProfile" class="space-y-4">
+        <div
+          v-if="!isEditingProfile"
+          class="space-y-4"
+        >
           <!-- Show current profile -->
           <div class="flex items-center gap-4">
             <OwnerBadge
@@ -114,41 +130,69 @@ async function onDeleteCategory() {
               size="md"
             />
             <div class="flex-1">
-              <p class="font-medium">{{ profile?.userName || 'Your Name' }}</p>
-              <p class="text-sm text-muted-foreground">{{ hasProfile ? 'Owner' : 'Not configured yet' }}</p>
+              <p class="font-medium">
+                {{ profile?.userName || 'Your Name' }}
+              </p>
+              <p class="text-sm text-muted-foreground">
+                {{ hasProfile ? 'Owner' : 'Not configured yet' }}
+              </p>
             </div>
           </div>
-          
-          <div v-if="hasSpouse" class="flex items-center gap-4">
+
+          <div
+            v-if="hasSpouse"
+            class="flex items-center gap-4"
+          >
             <OwnerBadge
               :name="profile?.spouseName || 'Spouse'"
               :color="profile?.spouseColor || 'secondary'"
               size="md"
             />
             <div class="flex-1">
-              <p class="font-medium">{{ profile?.spouseName }}</p>
-              <p class="text-sm text-muted-foreground">Spouse/Partner</p>
+              <p class="font-medium">
+                {{ profile?.spouseName }}
+              </p>
+              <p class="text-sm text-muted-foreground">
+                Spouse/Partner
+              </p>
             </div>
           </div>
 
-          <div v-if="!hasProfile" class="py-4 text-center">
-            <p class="text-sm text-muted-foreground italic">Add your name to personalize account ownership.</p>
+          <div
+            v-if="!hasProfile"
+            class="py-4 text-center"
+          >
+            <p class="text-sm text-muted-foreground italic">
+              Add your name to personalize account ownership.
+            </p>
           </div>
         </div>
 
         <!-- Edit form -->
-        <div v-else class="space-y-6">
+        <div
+          v-else
+          class="space-y-6"
+        >
           <!-- Your Profile -->
           <div class="space-y-4">
-            <h3 class="font-medium">Your Profile</h3>
-            
+            <h3 class="font-medium">
+              Your Profile
+            </h3>
+
             <UFormField label="Your Name">
-              <UInput v-model="userName" placeholder="Enter your name" />
+              <UInput
+                v-model="userName"
+                placeholder="Enter your name"
+              />
             </UFormField>
-            
+
             <UFormField label="Your Color">
               <div class="flex items-center gap-4">
-                <OwnerBadge :name="userName || 'You'" :color="userColor" size="lg" />
+                <OwnerBadge
+                  :name="userName || 'You'"
+                  :color="userColor"
+                  size="lg"
+                />
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="color in colorOptions"
@@ -170,16 +214,30 @@ async function onDeleteCategory() {
 
           <!-- Spouse/Partner -->
           <div class="space-y-4">
-            <h3 class="font-medium">Spouse/Partner (Optional)</h3>
-            <p class="text-sm text-muted-foreground">Add a spouse or partner to enable joint and individual account ownership.</p>
-            
+            <h3 class="font-medium">
+              Spouse/Partner (Optional)
+            </h3>
+            <p class="text-sm text-muted-foreground">
+              Add a spouse or partner to enable joint and individual account ownership.
+            </p>
+
             <UFormField label="Spouse/Partner Name">
-              <UInput v-model="spouseName" placeholder="Enter spouse/partner name" />
+              <UInput
+                v-model="spouseName"
+                placeholder="Enter spouse/partner name"
+              />
             </UFormField>
-            
-            <UFormField v-if="spouseName" label="Spouse/Partner Color">
+
+            <UFormField
+              v-if="spouseName"
+              label="Spouse/Partner Color"
+            >
               <div class="flex items-center gap-4">
-                <OwnerBadge :name="spouseName" :color="spouseColor" size="lg" />
+                <OwnerBadge
+                  :name="spouseName"
+                  :color="spouseColor"
+                  size="lg"
+                />
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="color in colorOptions"
@@ -199,19 +257,33 @@ async function onDeleteCategory() {
 
           <!-- Action buttons -->
           <div class="flex justify-end gap-2 pt-4">
-            <UButton label="Cancel" variant="ghost" @click="isEditingProfile = false" />
-            <UButton label="Save Profile" @click="onSaveProfile" />
+            <UButton
+              label="Cancel"
+              variant="ghost"
+              @click="isEditingProfile = false"
+            />
+            <UButton
+              label="Save Profile"
+              @click="onSaveProfile"
+            />
           </div>
         </div>
       </UCard>
 
       <!-- Account Categories Section -->
-      <UCard variant="outline" class="shadow-sm">
+      <UCard
+        variant="outline"
+        class="shadow-sm"
+      >
         <template #header>
           <div class="flex items-center justify-between">
             <div>
-              <h2 class="text-xl font-semibold">Account Categories</h2>
-              <p class="text-sm text-muted-foreground">Organize your accounts by category (e.g., Investment, Savings, Credit).</p>
+              <h2 class="text-xl font-semibold">
+                Account Categories
+              </h2>
+              <p class="text-sm text-muted-foreground">
+                Organize your accounts by category (e.g., Investment, Savings, Credit).
+              </p>
             </div>
             <UButton
               icon="i-lucide-plus"
@@ -221,25 +293,36 @@ async function onDeleteCategory() {
           </div>
         </template>
 
-        <div v-if="categories.length === 0" class="py-8 text-center">
-          <UIcon name="i-lucide-folder-open" class="text-4xl text-muted-foreground mb-2" />
-          <p class="text-sm text-muted-foreground">No categories yet. Add one to get started.</p>
+        <div
+          v-if="categories.length === 0"
+          class="py-8 text-center"
+        >
+          <UIcon
+            name="i-lucide-folder-open"
+            class="text-4xl text-muted-foreground mb-2"
+          />
+          <p class="text-sm text-muted-foreground">
+            No categories yet. Add one to get started.
+          </p>
         </div>
 
-        <div v-else class="divide-y divide-border">
+        <div
+          v-else
+          class="divide-y divide-border"
+        >
           <div
             v-for="cat in categories"
             :key="cat.id"
             class="flex items-center justify-between py-3"
           >
             <div class="flex items-center gap-3">
-              <UIcon 
-                :name="cat.type === 'asset' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'" 
+              <UIcon
+                :name="cat.type === 'asset' ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
                 :class="cat.type === 'asset' ? 'text-success' : 'text-error'"
               />
               <span class="font-medium">{{ cat.name }}</span>
-              <UBadge 
-                :color="cat.type === 'asset' ? 'success' : 'error'" 
+              <UBadge
+                :color="cat.type === 'asset' ? 'success' : 'error'"
                 variant="subtle"
                 size="sm"
               >
@@ -275,14 +358,24 @@ async function onDeleteCategory() {
     />
 
     <!-- Delete Category Confirmation Modal -->
-    <UModal v-model:open="isDeleteCategoryModalOpen" title="Delete Category?">
+    <UModal
+      v-model:open="isDeleteCategoryModalOpen"
+      title="Delete Category?"
+    >
       <template #body>
         <p>Are you sure you want to delete the category <strong>{{ categoryToDelete?.name }}</strong>?</p>
-        <p class="text-sm text-muted-foreground mt-2">This action cannot be undone. You can only delete categories that are not in use by any accounts.</p>
+        <p class="text-sm text-muted-foreground mt-2">
+          This action cannot be undone. You can only delete categories that are not in use by any accounts.
+        </p>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2">
-          <UButton label="Cancel" color="neutral" variant="ghost" @click="isDeleteCategoryModalOpen = false" />
+          <UButton
+            label="Cancel"
+            color="neutral"
+            variant="ghost"
+            @click="isDeleteCategoryModalOpen = false"
+          />
           <UButton
             label="Delete Category"
             color="error"

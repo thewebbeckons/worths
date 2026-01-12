@@ -19,15 +19,15 @@ const categoryOptions = computed(() => dbCategories.value.map(c => c.name))
 
 // Owner options based on profile configuration
 const ownerOptions = computed(() => {
-  const options: { value: OwnerType; label: string }[] = [
+  const options: { value: OwnerType, label: string }[] = [
     { value: 'me', label: profile.value?.userName || 'Me' }
   ]
-  
+
   if (profile.value?.spouseName) {
     options.push({ value: 'spouse', label: profile.value.spouseName })
     options.push({ value: 'joint', label: 'Joint' })
   }
-  
+
   return options
 })
 
@@ -70,7 +70,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   state.initialBalance = 0
   state.owner = 'me'
   notes.value = ''
-  
+
   if (props.onSuccess) {
     props.onSuccess()
   }
@@ -79,22 +79,49 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormField label="Account Name" name="name">
-      <UInput v-model="state.name" placeholder="e.g. Chase Checking" />
+  <UForm
+    :schema="schema"
+    :state="state"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
+    <UFormField
+      label="Account Name"
+      name="name"
+    >
+      <UInput
+        v-model="state.name"
+        placeholder="e.g. Chase Checking"
+      />
     </UFormField>
 
-    <UFormField label="Bank" name="bank">
-      <UInput v-model="state.bank" placeholder="e.g. Chase, Wells Fargo" />
+    <UFormField
+      label="Bank"
+      name="bank"
+    >
+      <UInput
+        v-model="state.bank"
+        placeholder="e.g. Chase, Wells Fargo"
+      />
     </UFormField>
 
-    <UFormField label="Category" name="category">
-      <USelect v-model="state.category" :items="categoryOptions" class="w-42" />
+    <UFormField
+      label="Category"
+      name="category"
+    >
+      <USelect
+        v-model="state.category"
+        :items="categoryOptions"
+        class="w-42"
+      />
     </UFormField>
 
-    <UFormField label="Owner" name="owner">
-      <USelect 
-        v-model="state.owner" 
+    <UFormField
+      label="Owner"
+      name="owner"
+    >
+      <USelect
+        v-model="state.owner"
         :items="ownerOptions"
         value-key="value"
         label-key="label"
@@ -102,16 +129,27 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       />
     </UFormField>
 
-    <UFormField label="Initial Balance" name="initialBalance">
-      <UInputNumber v-model="state.initialBalance" :format-options="{ style: 'currency', currency: 'USD' }" :step="0.01" />
+    <UFormField
+      label="Initial Balance"
+      name="initialBalance"
+    >
+      <UInputNumber
+        v-model="state.initialBalance"
+        :format-options="{ style: 'currency', currency: 'USD' }"
+        :step="0.01"
+      />
     </UFormField>
 
-    <UFormField label="Notes" name="notes" hint="Optional">
-      <UEditor 
+    <UFormField
+      label="Notes"
+      name="notes"
+      hint="Optional"
+    >
+      <UEditor
         v-model="notes"
         content-type="html"
         placeholder="Add notes about this account (e.g. GIC matures Sept. 28th)"
-        :ui="{ 
+        :ui="{
           root: 'border border-default rounded-md',
           content: 'py-4',
           base: 'min-h-[120px]'
@@ -120,8 +158,17 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     </UFormField>
 
     <div class="flex justify-end gap-2">
-      <UButton label="Cancel" color="neutral" variant="ghost" @click="$emit('close')" />
-      <UButton type="submit" label="Add Account" color="primary" />
+      <UButton
+        label="Cancel"
+        color="neutral"
+        variant="ghost"
+        @click="$emit('close')"
+      />
+      <UButton
+        type="submit"
+        label="Add Account"
+        color="primary"
+      />
     </div>
   </UForm>
 </template>

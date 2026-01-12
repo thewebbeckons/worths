@@ -72,15 +72,36 @@ const typeOptions = [
 </script>
 
 <template>
-  <UModal :open="open" :title="modalTitle" @update:open="emit('update:open', $event)">
+  <UModal
+    :open="open"
+    :title="modalTitle"
+    @update:open="emit('update:open', $event)"
+  >
     <template #body>
-      <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-        <UFormField label="Category Name" name="name">
-          <UInput v-model="state.name" placeholder="e.g. Retirement, Emergency Fund" />
+      <UForm
+        :schema="schema"
+        :state="state"
+        class="space-y-4"
+        @submit="onSubmit"
+      >
+        <UFormField
+          label="Category Name"
+          name="name"
+        >
+          <UInput
+            v-model="state.name"
+            placeholder="e.g. Retirement, Emergency Fund"
+          />
         </UFormField>
 
-        <UFormField label="Type" name="type">
-          <URadioGroup v-model="state.type" :items="typeOptions" />
+        <UFormField
+          label="Type"
+          name="type"
+        >
+          <URadioGroup
+            v-model="state.type"
+            :items="typeOptions"
+          />
         </UFormField>
 
         <div class="flex justify-end gap-2 pt-4">

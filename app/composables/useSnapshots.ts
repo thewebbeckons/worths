@@ -58,7 +58,7 @@ export function useSnapshots() {
   /**
    * Get filtered net worth history based on start date
    */
-  function getFilteredHistory(startDate: Date | null): { date: string; value: number }[] {
+  function getFilteredHistory(startDate: Date | null): { date: string, value: number }[] {
     const history = getNetWorthHistory.value
     if (!startDate) return history
 

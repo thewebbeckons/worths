@@ -50,12 +50,19 @@ const bankOptions = computed(() => {
 <template>
   <UDashboardPanel id="accounts">
     <template #header>
-      <UDashboardNavbar title="Accounts" description="Manage your assets and liabilities">
+      <UDashboardNavbar
+        title="Accounts"
+        description="Manage your assets and liabilities"
+      >
         <template #leading>
           <UDashboardSidebarCollapse />
         </template>
         <template #right>
-          <UButton label="Add Account" @click="isAddAccountOpen = true" icon="i-heroicons-plus" />
+          <UButton
+            label="Add Account"
+            icon="i-heroicons-plus"
+            @click="isAddAccountOpen = true"
+          />
         </template>
       </UDashboardNavbar>
     </template>
@@ -64,12 +71,12 @@ const bankOptions = computed(() => {
       <div class="space-y-6">
         <div class="flex items-center justify-between gap-4">
           <UInput
-          ref="searchInput"
-          v-model="searchQuery"
-          placeholder="Search by name or bank..."
-          icon="i-lucide-search"
-          clear
-          class="w-64"
+            ref="searchInput"
+            v-model="searchQuery"
+            placeholder="Search by name or bank..."
+            icon="i-lucide-search"
+            clear
+            class="w-64"
           >
             <template #trailing>
               <UKbd value="/" />
@@ -105,9 +112,12 @@ const bankOptions = computed(() => {
             />
           </div>
         </div>
-        
-        <UCard variant="outline" class="shadow-sm">
-          <AccountList 
+
+        <UCard
+          variant="outline"
+          class="shadow-sm"
+        >
+          <AccountList
             :search-query="searchQuery"
             :category-filter="categoryFilter"
             :owner-filter="ownerFilter"
@@ -116,7 +126,10 @@ const bankOptions = computed(() => {
         </UCard>
       </div>
 
-      <UModal v-model:open="isAddAccountOpen" title="Add Account">
+      <UModal
+        v-model:open="isAddAccountOpen"
+        title="Add Account"
+      >
         <template #body>
           <AccountForm @close="isAddAccountOpen = false" />
         </template>

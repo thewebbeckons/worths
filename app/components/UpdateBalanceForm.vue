@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date'
+import { today, getLocalTimeZone, type DateValue } from '@internationalized/date'
 import type { FormSubmitEvent } from '#ui/types'
 
 const props = defineProps<{
@@ -9,12 +9,12 @@ const props = defineProps<{
 
 const emit = defineEmits(['close', 'saved'])
 
-const { accounts, updateBalance, isReady } = useNetWorth()
+const { accounts, updateBalance } = useNetWorth()
 
 const schema = z.object({
   accountId: z.string().min(1, 'Account is required'),
   balance: z.number(),
-  date: z.any().optional()
+  date: z.custom<DateValue>().optional()
 })
 
 type Schema = z.output<typeof schema>
@@ -30,10 +30,10 @@ const accountOptions = computed(() => {
 // Get today's date as CalendarDate
 const todayDate = today(getLocalTimeZone())
 
-const state = reactive({
+const state = reactive<{ accountId: string, balance: number, date: DateValue }>({
   accountId: props.preselectedAccountId || '',
   balance: 0,
-  date: todayDate as any
+  date: todayDate
 })
 
 // Initialize balance if account is preselected
@@ -71,8 +71,16 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormField label="Account" name="accountId">
+  <UForm
+    :schema="schema"
+    :state="state"
+    class="space-y-4"
+    @submit="onSubmit"
+  >
+    <UFormField
+      label="Account"
+      name="accountId"
+    >
       <USelect
         v-model="state.accountId"
         :items="accountOptions"
@@ -81,7 +89,10 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       />
     </UFormField>
 
-    <UFormField label="New Balance" name="balance">
+    <UFormField
+      label="New Balance"
+      name="balance"
+    >
       <UInputNumber
         v-model="state.balance"
         :format-options="{ style: 'currency', currency: 'USD' }"
@@ -89,12 +100,23 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       />
     </UFormField>
 
-    <UFormField label="Date" name="date">
-      <UInputDate v-model="state.date" type="date" />
+    <UFormField
+      label="Date"
+      name="date"
+    >
+      <UInputDate
+        v-model="state.date"
+        type="date"
+      />
     </UFormField>
 
     <div class="flex justify-end gap-2">
-      <UButton label="Cancel" color="neutral" variant="ghost" @click="$emit('close')" />
+      <UButton
+        label="Cancel"
+        color="neutral"
+        variant="ghost"
+        @click="$emit('close')"
+      />
       <UButton
         type="submit"
         label="Update Balance"

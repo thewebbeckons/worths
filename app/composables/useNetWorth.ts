@@ -174,7 +174,7 @@ export const useNetWorth = () => {
   const getAccountsGroupedByCategory = (type: 'asset' | 'liability') => {
     const filteredAccounts = dbAccounts.value.filter(acc => acc.type === type)
 
-    const groups: Record<string, { accounts: typeof filteredAccounts; total: number }> = {}
+    const groups: Record<string, { accounts: typeof filteredAccounts, total: number }> = {}
 
     for (const acc of filteredAccounts) {
       if (!groups[acc.categoryName]) {

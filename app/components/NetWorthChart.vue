@@ -51,24 +51,31 @@ const tooltipTemplate = (d: typeof data.value[0]) => {
 
 <template>
   <div class="w-full">
-    <div v-if="data.length > 0" class="h-[300px]">
-      <VisXYContainer :data="data" :height="300" :margin="{ top: 10, right: 10, bottom: 25, left: 50 }">
-        <VisArea 
-          :x="x" 
-          :y="y" 
+    <div
+      v-if="data.length > 0"
+      class="h-[300px]"
+    >
+      <VisXYContainer
+        :data="data"
+        :height="300"
+        :margin="{ top: 10, right: 10, bottom: 25, left: 50 }"
+      >
+        <VisArea
+          :x="x"
+          :y="y"
           :color="color"
           :opacity="0.3"
           :curve-type="CurveType.MonotoneX"
         />
-        <VisLine 
-          :x="x" 
-          :y="y" 
+        <VisLine
+          :x="x"
+          :y="y"
           :color="color"
           :line-width="2"
           :curve-type="CurveType.MonotoneX"
         />
-        <VisAxis 
-          type="x" 
+        <VisAxis
+          type="x"
           :tick-format="xTickFormat"
           :num-ticks="6"
           :grid-line="false"
@@ -86,7 +93,10 @@ const tooltipTemplate = (d: typeof data.value[0]) => {
         <VisCrosshair :template="tooltipTemplate" />
       </VisXYContainer>
     </div>
-    <div v-else class="h-full flex items-center justify-center text-gray-500">
+    <div
+      v-else
+      class="h-full flex items-center justify-center text-gray-500"
+    >
       No data available
     </div>
   </div>
