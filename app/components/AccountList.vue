@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
-import { CalendarDate, type DateValue } from '@internationalized/date'
+import { CalendarDate } from '@internationalized/date'
 
 const { accounts, updateBalance, deleteAccount } = useNetWorth()
 
@@ -10,7 +10,7 @@ type AccountRow = {
   bank: string
   category: string
   owner: string
-  ownerColor: string
+  ownerColor?: string
   type: 'asset' | 'liability'
   balance: number
 }
@@ -119,7 +119,7 @@ const isUpdateModalOpen = ref(false)
 const selectedAccount = ref<AccountRow | null>(null)
 const newBalanceValue = ref(0)
 const today = new Date()
-const newBalanceDate = ref<DateValue>(new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate()))
+const newBalanceDate = ref(new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate()))
 
 const openUpdateModal = (row: AccountRow) => {
   selectedAccount.value = row
@@ -243,6 +243,7 @@ const confirmDelete = async () => {
         </div>
       </template>
     </UTable>
+    
 
     <!-- Update Balance Modal -->
     <UModal v-model:open="isUpdateModalOpen">
@@ -256,7 +257,8 @@ const confirmDelete = async () => {
             <UFormField label="Date">
               <UInputDate
                 ref="inputDate"
-                v-model="newBalanceDate"
+                :model-value="(newBalanceDate as any)"
+                @update:model-value="(v: any) => newBalanceDate = v"
               >
                 <template #trailing>
                   <UPopover>
@@ -270,7 +272,8 @@ const confirmDelete = async () => {
                     />
                     <template #content>
                       <UCalendar
-                        v-model="newBalanceDate"
+                        :model-value="(newBalanceDate as any)"
+                        @update:model-value="(v: any) => newBalanceDate = v"
                         class="p-2"
                       />
                     </template>

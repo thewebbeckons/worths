@@ -73,7 +73,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <UForm
     :schema="schema"
-    :state="state"
+    :state="(state as any)"
     class="space-y-4"
     @submit="onSubmit"
   >
@@ -105,7 +105,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       name="date"
     >
       <UInputDate
-        v-model="state.date"
+        :model-value="(state.date as any)"
+        @update:model-value="(v: any) => state.date = v"
         type="date"
       />
     </UFormField>

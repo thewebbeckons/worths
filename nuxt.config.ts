@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  compatibilityDate: '2025-01-15',
+  compatibilityDate: '2026-01-01',
 
   // Disable telemetry
   telemetry: { enabled: false },
