@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { h, resolveComponent } from 'vue'
-import { CalendarDate } from '@internationalized/date'
 
-const { accounts, updateBalance, deleteAccount } = useNetWorth()
+const { accounts, updateBalance, deleteAccount, getBalanceHistory } = useNetWorth()
 
 type AccountRow = {
   id: string
@@ -13,6 +12,8 @@ type AccountRow = {
   ownerColor?: string
   type: 'asset' | 'liability'
   balance: number
+  monthlyChange: number
+  notes?: string
 }
 
 type EditableAccount = {
@@ -46,6 +47,14 @@ const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value)
 }
 
+// Helper to format change with sign
+const formatChange = (value: number) => {
+  const formatted = formatCurrency(Math.abs(value))
+  if (value > 0) return `+${formatted}`
+  if (value < 0) return `-${formatted}`
+  return formatted
+}
+
 const columns = [
   { accessorKey: 'name', header: 'Name' },
   { accessorKey: 'bank', header: 'Bank' },
@@ -65,22 +74,70 @@ const columns = [
       })
     }
   },
+  { accessorKey: 'monthlyChange', header: 'MoM Change' },
   { id: 'actions' }
 ]
 
 const sorting = ref([])
 
+// Store previous month balances per account
+const previousMonthBalances = ref<Record<string, number>>({})
+
+// Load previous month balances for all accounts
+const loadPreviousMonthBalances = async () => {
+  const now = new Date()
+  const currentMonth = now.getMonth()
+  const currentYear = now.getFullYear()
+  
+  // Calculate previous month
+  const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1
+  const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear
+  
+  const balances: Record<string, number> = {}
+  
+  for (const acc of accounts.value) {
+    try {
+      const history = await getBalanceHistory(acc.id)
+      // Find the most recent balance from previous month or earlier
+      const prevMonthBalance = history
+        .filter(entry => {
+          const entryDate = new Date(entry.date)
+          // Entry is from previous month or earlier
+          return entryDate.getFullYear() < prevYear || 
+            (entryDate.getFullYear() === prevYear && entryDate.getMonth() <= prevMonth)
+        })
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0]
+      
+      balances[acc.id] = prevMonthBalance?.value ?? 0
+    } catch {
+      balances[acc.id] = 0
+    }
+  }
+  
+  previousMonthBalances.value = balances
+}
+
+// Load balances when accounts change
+watch(accounts, () => {
+  loadPreviousMonthBalances()
+}, { immediate: true })
+
 const items = computed<AccountRow[]>(() => {
-  return accounts.value.map(acc => ({
-    id: acc.id,
-    name: acc.name,
-    bank: acc.bank,
-    category: acc.category,
-    owner: acc.owner,
-    ownerColor: acc.ownerColor,
-    type: acc.type,
-    balance: acc.latestBalance
-  }))
+  return accounts.value.map(acc => {
+    const prevBalance = previousMonthBalances.value[acc.id] ?? 0
+    return {
+      id: acc.id,
+      name: acc.name,
+      bank: acc.bank,
+      category: acc.category,
+      owner: acc.owner,
+      ownerColor: acc.ownerColor,
+      type: acc.type,
+      balance: acc.latestBalance,
+      monthlyChange: acc.latestBalance - prevBalance,
+      notes: acc.notes
+    }
+  })
 })
 
 // Apply filters from props
@@ -114,25 +171,32 @@ const filteredAccountsTotal = computed(() => {
   }, 0)
 })
 
-// State for updating balance
-const isUpdateModalOpen = ref(false)
-const selectedAccount = ref<AccountRow | null>(null)
-const newBalanceValue = ref(0)
-const today = new Date()
-const newBalanceDate = ref(new CalendarDate(today.getFullYear(), today.getMonth() + 1, today.getDate()))
+// State for inline balance editing
+const editingAccountId = ref<string | null>(null)
+const editingBalance = ref(0)
+const isSaving = ref(false)
 
-const openUpdateModal = (row: AccountRow) => {
-  selectedAccount.value = row
-  newBalanceValue.value = row.balance
-  isUpdateModalOpen.value = true
+const startEditing = (row: AccountRow) => {
+  editingAccountId.value = row.id
+  editingBalance.value = row.balance
 }
 
-const saveBalanceUpdate = async () => {
-  if (selectedAccount.value) {
-    const dateStr = `${newBalanceDate.value.year}-${String(newBalanceDate.value.month).padStart(2, '0')}-${String(newBalanceDate.value.day).padStart(2, '0')}`
-    await updateBalance(selectedAccount.value.id, newBalanceValue.value, dateStr)
-    isUpdateModalOpen.value = false
+const saveInlineBalance = async () => {
+  if (!editingAccountId.value) return
+  
+  isSaving.value = true
+  try {
+    const today = new Date()
+    const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+    await updateBalance(editingAccountId.value, editingBalance.value, dateStr)
+  } finally {
+    isSaving.value = false
+    editingAccountId.value = null
   }
+}
+
+const cancelEditing = () => {
+  editingAccountId.value = null
 }
 
 // State for editing account
@@ -147,7 +211,8 @@ const openEditModal = (row: AccountRow) => {
     category: row.category,
     owner: row.owner,
     type: row.type,
-    latestBalance: row.balance
+    latestBalance: row.balance,
+    notes: row.notes
   }
   isEditModalOpen.value = true
 }
@@ -168,6 +233,30 @@ const confirmDelete = async () => {
     accountToDelete.value = null
   }
 }
+
+// Dropdown menu items generator
+const getDropdownItems = (row: AccountRow) => [
+  [
+    {
+      label: 'Edit Account',
+      icon: 'i-lucide-pencil',
+      onClick: () => openEditModal(row)
+    },
+    {
+      label: 'View History',
+      icon: 'i-lucide-chart-no-axes-combined',
+      to: `/accounts/${row.id}`
+    }
+  ],
+  [
+    {
+      label: 'Delete Account',
+      icon: 'i-lucide-trash-2',
+      color: 'error' as const,
+      onClick: () => openDeleteModal(row)
+    }
+  ]
+]
 </script>
 
 <template>
@@ -198,115 +287,85 @@ const confirmDelete = async () => {
       </template>
 
       <template #balance-cell="{ row }">
-        <span :class="(row.original.type === 'liability' && row.original.balance > 0) || (row.original.type !== 'liability' && row.original.balance < 0) ? 'text-error' : 'text-primary'">
-          {{ formatCurrency(row.original.balance) }}
-        </span>
+        <div class="flex items-center gap-2">
+          <!-- Editing mode -->
+          <template v-if="editingAccountId === row.original.id">
+            <UInputNumber
+              v-model="editingBalance"
+              :format-options="{ style: 'currency', currency: 'USD' }"
+              :step="0.01"
+              size="sm"
+              class="w-32"
+              :disabled="isSaving"
+              @blur="saveInlineBalance"
+              @keyup.enter="saveInlineBalance"
+              @keyup.escape="cancelEditing"
+              autofocus
+            />
+            <UButton
+              v-if="isSaving"
+              icon="i-lucide-loader-2"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="animate-spin"
+              disabled
+            />
+          </template>
+          <!-- Display mode -->
+          <template v-else>
+            <span 
+              :class="(row.original.type === 'liability' && row.original.balance > 0) || (row.original.type !== 'liability' && row.original.balance < 0) ? 'text-error' : 'text-primary'"
+              class="cursor-pointer hover:underline"
+              @click="startEditing(row.original)"
+            >
+              {{ formatCurrency(row.original.balance) }}
+            </span>
+            <UButton
+              icon="i-lucide-pencil-line"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="opacity-0 group-hover:opacity-100 transition-opacity"
+              @click="startEditing(row.original)"
+            />
+          </template>
+        </div>
+      </template>
+
+      <template #monthlyChange-cell="{ row }">
+        <div class="flex items-center gap-1">
+          <UIcon
+            v-if="row.original.monthlyChange !== 0"
+            :name="row.original.monthlyChange > 0 ? 'i-lucide-trending-up' : 'i-lucide-trending-down'"
+            :class="row.original.monthlyChange > 0 ? 'text-success' : 'text-error'"
+            class="size-4"
+          />
+          <span 
+            :class="[
+              row.original.monthlyChange > 0 ? 'text-success' : '',
+              row.original.monthlyChange < 0 ? 'text-error' : '',
+              row.original.monthlyChange === 0 ? 'text-muted' : ''
+            ]"
+          >
+            {{ formatChange(row.original.monthlyChange) }}
+          </span>
+        </div>
       </template>
 
       <template #actions-cell="{ row }">
-        <div class="flex justify-end gap-2">
-          <UTooltip text="Update Balance">
+        <div class="flex justify-end">
+          <UDropdownMenu :items="getDropdownItems(row.original)">
             <UButton
-              icon="i-lucide-circle-dollar-sign"
-              color="success"
-              variant="ghost"
-              class="cursor-pointer"
-              @click="openUpdateModal(row.original)"
-            />
-          </UTooltip>
-          <UTooltip text="Edit Account">
-            <UButton
-              icon="i-lucide-pencil"
-              color="primary"
-              variant="ghost"
-              class="cursor-pointer"
-              @click="openEditModal(row.original)"
-            />
-          </UTooltip>
-          <UTooltip text="View History">
-            <UButton
-              icon="i-lucide-chart-no-axes-combined"
+              icon="i-lucide-ellipsis-vertical"
               color="neutral"
               variant="ghost"
-              :to="`/accounts/${row.original.id}`"
-            />
-          </UTooltip>
-          <UTooltip text="Delete Account">
-            <UButton
-              icon="i-lucide-trash-2"
-              color="error"
-              variant="ghost"
               class="cursor-pointer"
-              @click="openDeleteModal(row.original)"
             />
-          </UTooltip>
+          </UDropdownMenu>
         </div>
       </template>
     </UTable>
-    
-
-    <!-- Update Balance Modal -->
-    <UModal v-model:open="isUpdateModalOpen">
-      <template #content>
-        <div class="p-4">
-          <h3 class="text-lg font-bold mb-4">
-            Update Balance for {{ selectedAccount?.name }}
-          </h3>
-
-          <div class="space-y-4">
-            <UFormField label="Date">
-              <UInputDate
-                ref="inputDate"
-                :model-value="(newBalanceDate as any)"
-                @update:model-value="(v: any) => newBalanceDate = v"
-              >
-                <template #trailing>
-                  <UPopover>
-                    <UButton
-                      color="neutral"
-                      variant="link"
-                      size="sm"
-                      icon="i-lucide-calendar"
-                      aria-label="Select a date"
-                      class="px-0"
-                    />
-                    <template #content>
-                      <UCalendar
-                        :model-value="(newBalanceDate as any)"
-                        @update:model-value="(v: any) => newBalanceDate = v"
-                        class="p-2"
-                      />
-                    </template>
-                  </UPopover>
-                </template>
-              </UInputDate>
-            </UFormField>
-
-            <UFormField label="New Balance">
-              <UInputNumber
-                v-model="newBalanceValue"
-                :format-options="{ style: 'currency', currency: 'USD' }"
-                :step="0.01"
-              />
-            </UFormField>
-
-            <div class="flex justify-end gap-2 mt-4">
-              <UButton
-                label="Cancel"
-                color="neutral"
-                variant="ghost"
-                @click="isUpdateModalOpen = false"
-              />
-              <UButton
-                label="Save"
-                color="primary"
-                @click="saveBalanceUpdate"
-              />
-            </div>
-          </div>
-        </div>
-      </template>
-    </UModal>
 
     <!-- Edit Account Modal -->
     <UModal

@@ -63,7 +63,7 @@ const tooltipTemplate = (d: typeof data.value[0]) => {
 }
 </script>
 
-<template>
+<template>  
   <div class="w-full">
     <div
       v-if="data.length > 0"

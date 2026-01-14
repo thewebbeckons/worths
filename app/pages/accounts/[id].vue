@@ -54,6 +54,7 @@ const historyRows = computed(() => {
 
 const isEditModalOpen = ref(false)
 const isUpdateBalanceModalOpen = ref(false)
+const isNotesModalOpen = ref(false)
 
 const handleAccountSaved = async () => {
   await reloadHistory()
@@ -103,27 +104,16 @@ const handleBalanceUpdated = async () => {
           </div>
         </div>
 
-        <!-- Notes Card -->
-        <UCard
-          v-if="account.notes"
-          variant="subtle"
-          class="max-w-sm"
-        >
-          <template #header>
-            <div class="flex items-center gap-2 text-sm font-medium text-muted">
-              <UIcon
-                name="i-lucide-sticky-note"
-                class="w-4 h-4"
-              />
-              Notes
-            </div>
-          </template>
-          <div class="text-sm prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
-            {{ notesText }}
-          </div>
-        </UCard>
-
         <div class="flex gap-2 shrink-0">
+          <UButton
+            v-if="account.notes"
+            icon="i-lucide-sticky-note"
+            color="neutral"
+            variant="soft"
+            label="Notes"
+            aria-label="View Notes"
+            @click="isNotesModalOpen = true"
+          />
           <UButton
             label="Update Balance"
             icon="i-lucide-circle-dollar-sign"
@@ -236,6 +226,34 @@ const handleBalanceUpdated = async () => {
               @close="isUpdateBalanceModalOpen = false"
               @saved="handleBalanceUpdated"
             />
+          </div>
+        </template>
+      </UModal>
+
+      <!-- Notes Modal -->
+      <UModal v-model:open="isNotesModalOpen">
+        <template #content>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-4">
+              <UIcon
+                name="i-lucide-sticky-note"
+                class="w-5 h-5 text-muted"
+              />
+              <h3 class="text-lg font-bold">
+                Notes
+              </h3>
+            </div>
+            <div class="text-sm prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+              {{ notesText }}
+            </div>
+            <div class="flex justify-end mt-4">
+              <UButton
+                label="Close"
+                color="neutral"
+                variant="ghost"
+                @click="isNotesModalOpen = false"
+              />
+            </div>
           </div>
         </template>
       </UModal>
