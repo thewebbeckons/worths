@@ -1,22 +1,22 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from '@nuxt/ui'
+import type { NavigationMenuItem } from "@nuxt/ui";
 
-const route = useRoute()
+const route = useRoute();
 
 const navItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: 'Dashboard',
-    icon: 'i-lucide-layout-dashboard',
-    to: '/',
-    active: route.path === '/'
+    label: "Dashboard",
+    icon: "i-lucide-layout-dashboard",
+    to: "/",
+    active: route.path === "/",
   },
   {
-    label: 'Accounts',
-    icon: 'i-lucide-wallet',
-    to: '/accounts',
-    active: route.path.startsWith('/accounts')
-  }
-])
+    label: "Accounts",
+    icon: "i-lucide-wallet",
+    to: "/accounts",
+    active: route.path.startsWith("/accounts"),
+  },
+]);
 </script>
 
 <template>
@@ -36,19 +36,16 @@ const navItems = computed<NavigationMenuItem[]>(() => [
           <UTooltip text="Worths">
             <img
               src="/logo.png"
-              alt="Worthie Logo"
+              alt="Worths Logo"
               class="rounded-lg"
               :class="
                 collapsed
                   ? 'h-(--reka-dropdown-menu-trigger-width) w-(--reka-dropdown-menu-trigger-width)'
                   : 'h-8 w-8'
               "
-            >
+            />
           </UTooltip>
-          <span
-            v-if="!collapsed"
-            class="ml-2 font-bold text-lg"
-          >Worths</span>
+          <span v-if="!collapsed" class="ml-2 font-bold text-lg">Worths</span>
         </div>
       </template>
 

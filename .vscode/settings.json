@@ -5,11 +5,19 @@
   "editor.quickSuggestions": {
     "strings": "on"
   },
-  "tailwindCSS.classAttributes": ["class", "ui"],
-  "tailwindCSS.experimental.classRegex": [
-    ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  "tailwindCSS.classAttributes": [
+    "class",
+    "ui"
   ],
-  "deno.enablePaths": ["supabase/functions"],
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "ui:\\s*{([^)]*)\\s*}",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ]
+  ],
+  "deno.enablePaths": [
+    "supabase/functions"
+  ],
   "deno.lint": true,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
@@ -18,12 +26,15 @@
   "eslint.format.enable": true,
   "editor.defaultFormatter": "dbaeumer.vscode-eslint",
   "[vue]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   }
 }

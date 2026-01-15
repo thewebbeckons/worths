@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Worthie is a privacy-focused net worth tracking PWA built with Nuxt 4. All data is stored locally in the browser using IndexedDB via Dexie.js. The app runs entirely client-side (`ssr: false`).
+Worths is a privacy-focused net worth tracking PWA built with Nuxt 4. All data is stored locally in the browser using IndexedDB via Dexie.js. The app runs entirely client-side (`ssr: false`).
 
 ## Development Commands
 
