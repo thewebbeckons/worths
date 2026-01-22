@@ -16,6 +16,12 @@ const navItems = computed<NavigationMenuItem[]>(() => [
     to: "/accounts",
     active: route.path.startsWith("/accounts"),
   },
+  {
+    label: "Trends",
+    icon: "i-lucide-trending-up",
+    to: "/trends",
+    active: route.path.startsWith("/trends"),
+  },
 ]);
 </script>
 
