@@ -17,3 +17,7 @@
   --color-green-950: #052E16;
 
 }
+
+:root {
+  --ui-radius: 0.25rem;
+}

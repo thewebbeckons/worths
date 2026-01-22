@@ -82,7 +82,6 @@ const navItems = computed<NavigationMenuItem[]>(() => [
         </UTooltip>
       </template>
     </UDashboardSidebar>
-
     <slot />
   </UDashboardGroup>
 </template>
