@@ -81,6 +81,49 @@ class NetWorthDatabase extends Dexie {
       categorySnapshots: '++id, [month+categoryId], categoryId',
       profile: '++id'
     })
+
+    // Version 7 schema - add icon and color fields to categories
+    this.version(7).stores({
+      accounts: '++id, legacyId, categoryId, type, bank, owner',
+      balances: '++id, accountId, date',
+      categories: '++id, name, type',
+      transactions: '++id, legacyId, accountId, date',
+      monthlySnapshots: 'month',
+      categorySnapshots: '++id, [month+categoryId], categoryId',
+      profile: '++id'
+    }).upgrade(async (tx) => {
+      // Add default icons and colors to existing categories
+      const categories = await tx.table('categories').toArray()
+      const defaultIcons: Record<string, { icon: string, color: string }> = {
+        'property': { icon: 'lucide-home', color: 'primary' },
+        'tfsa': { icon: 'lucide-leaf', color: 'success' },
+        'rrsp': { icon: 'lucide-piggy-bank', color: 'warning' },
+        'cash': { icon: 'lucide-wallet', color: 'neutral' },
+        'crypto': { icon: 'lucide-bitcoin', color: 'secondary' },
+        'investment': { icon: 'lucide-trending-up', color: 'info' },
+        'mortgage': { icon: 'lucide-home', color: 'error' },
+        'credit': { icon: 'lucide-credit-card', color: 'error' },
+        'loan': { icon: 'lucide-hand-coins', color: 'error' }
+      }
+
+      for (const cat of categories) {
+        const normalizedName = cat.name.toLowerCase()
+        const defaults = defaultIcons[normalizedName]
+
+        if (defaults) {
+          await tx.table('categories').update(cat.id, {
+            icon: defaults.icon,
+            color: defaults.color
+          })
+        } else {
+          // Default fallback based on type
+          await tx.table('categories').update(cat.id, {
+            icon: cat.type === 'asset' ? 'lucide-wallet' : 'lucide-credit-card',
+            color: cat.type === 'asset' ? 'primary' : 'error'
+          })
+        }
+      }
+    })
   }
 }
 

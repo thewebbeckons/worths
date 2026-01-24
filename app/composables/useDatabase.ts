@@ -21,6 +21,8 @@ import type {
  */
 export interface AccountWithDetails extends DbAccount {
   categoryName: string
+  categoryIcon?: string
+  categoryColor?: string
   ownerName: string
   ownerColor?: string
   latestBalance: number
@@ -109,9 +111,9 @@ async function loadAccounts(): Promise<void> {
   const currentProfile = await loadProfile()
 
   // Create lookup maps
-  const categoryMap = new Map<number, string>()
+  const categoryMap = new Map<number, DbCategory>()
   for (const cat of allCategories) {
-    if (cat.id) categoryMap.set(cat.id, cat.name)
+    if (cat.id) categoryMap.set(cat.id, cat)
   }
 
   // Load accounts with details
@@ -125,9 +127,13 @@ async function loadAccounts(): Promise<void> {
       .where('accountId').equals(account.id)
       .last()
 
+    const category = categoryMap.get(account.categoryId)
+
     accountsWithDetails.push({
       ...account,
-      categoryName: categoryMap.get(account.categoryId) || 'Unknown',
+      categoryName: category?.name || 'Unknown',
+      categoryIcon: category?.icon,
+      categoryColor: category?.color,
       ownerName: getOwnerDisplayName(account.owner, currentProfile),
       ownerColor: getOwnerColorValue(account.owner, currentProfile),
       latestBalance: latestBalance?.value || 0
@@ -387,7 +393,7 @@ async function deleteAccount(accountId: number): Promise<void> {
 /**
  * Add a new category
  */
-async function addCategory(name: string, type: 'asset' | 'liability'): Promise<number | undefined> {
+async function addCategory(name: string, type: 'asset' | 'liability', icon?: string, color?: string): Promise<number | undefined> {
   if (import.meta.server) return
   const db = getDb()
 
@@ -397,7 +403,7 @@ async function addCategory(name: string, type: 'asset' | 'liability'): Promise<n
     throw new Error(`Category "${name}" already exists`)
   }
 
-  const id = await db.categories.add({ name, type }) as number
+  const id = await db.categories.add({ name, type, icon, color }) as number
   await loadAccounts() // Refresh categories
   return id
 }
@@ -405,7 +411,7 @@ async function addCategory(name: string, type: 'asset' | 'liability'): Promise<n
 /**
  * Update an existing category
  */
-async function updateCategory(id: number, name: string, type: 'asset' | 'liability'): Promise<void> {
+async function updateCategory(id: number, name: string, type: 'asset' | 'liability', icon?: string, color?: string): Promise<void> {
   if (import.meta.server) return
   const db = getDb()
 
@@ -415,7 +421,7 @@ async function updateCategory(id: number, name: string, type: 'asset' | 'liabili
     throw new Error(`Category "${name}" already exists`)
   }
 
-  await db.categories.update(id, { name, type })
+  await db.categories.update(id, { name, type, icon, color })
 
   // Update all accounts using this category to reflect the new type
   const accountsWithCategory = await db.accounts.where('categoryId').equals(id).toArray()

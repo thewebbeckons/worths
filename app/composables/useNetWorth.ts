@@ -174,11 +174,16 @@ export const useNetWorth = () => {
   const getAccountsGroupedByCategory = (type: 'asset' | 'liability') => {
     const filteredAccounts = dbAccounts.value.filter(acc => acc.type === type)
 
-    const groups: Record<string, { accounts: typeof filteredAccounts, total: number }> = {}
+    const groups: Record<string, { accounts: typeof filteredAccounts, total: number, icon?: string, color?: string }> = {}
 
     for (const acc of filteredAccounts) {
       if (!groups[acc.categoryName]) {
-        groups[acc.categoryName] = { accounts: [], total: 0 }
+        groups[acc.categoryName] = {
+          accounts: [],
+          total: 0,
+          icon: acc.categoryIcon,
+          color: acc.categoryColor
+        }
       }
       groups[acc.categoryName]!.accounts.push(acc)
       groups[acc.categoryName]!.total += acc.latestBalance
@@ -187,6 +192,8 @@ export const useNetWorth = () => {
     return Object.entries(groups)
       .map(([category, data]) => ({
         category,
+        icon: data.icon,
+        color: data.color,
         accounts: data.accounts.map(acc => ({
           id: String(acc.id),
           name: acc.name,

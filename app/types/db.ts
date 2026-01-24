@@ -41,6 +41,8 @@ export interface DbCategory {
   id?: number;
   name: string;
   type: "asset" | "liability";
+  icon?: string; // Icon name (e.g., 'lucide-home', 'lucide-credit-card')
+  color?: string; // Nuxt UI semantic color (primary, error, success, warning, info, etc.)
 }
 
 // Transaction table schema
@@ -73,9 +75,13 @@ export interface DbCategorySnapshot {
 
 // Default categories for new databases
 export const DEFAULT_CATEGORIES: Omit<DbCategory, "id">[] = [
-  { name: "Investment", type: "asset" },
-  { name: "Credit", type: "liability" },
-  { name: "Cash", type: "asset" },
+  { name: "Property", type: "asset", icon: "lucide-home", color: "primary" },
+  { name: "TFSA", type: "asset", icon: "lucide-leaf", color: "success" },
+  { name: "RRSP", type: "asset", icon: "lucide-piggy-bank", color: "warning" },
+  { name: "Cash", type: "asset", icon: "lucide-wallet", color: "neutral" },
+  { name: "Crypto", type: "asset", icon: "lucide-bitcoin", color: "secondary" },
+  { name: "Mortgage", type: "liability", icon: "lucide-home", color: "error" },
+  { name: "Credit Card", type: "liability", icon: "lucide-credit-card", color: "error" },
 ];
 
 /**
