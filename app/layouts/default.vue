@@ -67,19 +67,21 @@ const navItems = computed<NavigationMenuItem[]>(() => [
         </div>
       </template>
       <template #footer="{ collapsed }">
-        <UTooltip text="Settings">
-          <UButton
-            to="/settings"
-            icon="i-lucide-settings"
-            :square="collapsed"
-            aria-label="Settings"
-            color="neutral"
-            variant="ghost"
-            class="w-full justify-start"
-          >
-            <span v-if="!collapsed">Settings</span>
-          </UButton>
-        </UTooltip>
+        <UNavigationMenu
+          class="w-full"
+          :items="[
+            {
+              label: 'Settings',
+              icon: 'i-lucide-settings',
+              to: '/settings',
+              active: route.path.startsWith('/settings'),
+            },
+          ]"
+          orientation="vertical"
+          :collapsed="collapsed"
+          tooltip
+          popover
+        />
       </template>
     </UDashboardSidebar>
     <slot />
