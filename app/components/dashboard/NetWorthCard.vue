@@ -68,17 +68,23 @@ const chartData = computed(() => {
   );
   const months = getMonthsInPeriod(selectedMonthsCount.value);
 
+  let lastAssets = 0;
+  let lastLiabilities = 0;
+  let lastNetWorth = 0;
+
   return months.map((month, index) => {
     const snapshot = snapshotMap.get(month);
-    const assets = snapshot?.assetsTotal ?? 0;
-    const liabilities = snapshot?.liabilitiesTotal ?? 0;
-    const netWorth = snapshot?.netWorth ?? 0;
+    if (snapshot) {
+      lastAssets = snapshot.assetsTotal;
+      lastLiabilities = snapshot.liabilitiesTotal;
+      lastNetWorth = snapshot.netWorth;
+    }
 
     return {
       x: index,
-      assets,
-      liabilities,
-      netWorth,
+      assets: snapshot?.assetsTotal ?? lastAssets,
+      liabilities: snapshot?.liabilitiesTotal ?? lastLiabilities,
+      netWorth: snapshot?.netWorth ?? lastNetWorth,
       month,
       formattedDate: new Intl.DateTimeFormat("en-US", {
         month: "short",
