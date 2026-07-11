@@ -8,13 +8,18 @@ import {
   VisScatter,
 } from "@unovis/vue";
 import { CurveType } from "@unovis/ts";
-import { useStorage } from "@vueuse/core";
 import { formatCompactCurrency, parseLocalDate } from "~/utils/format";
 
 const { monthlySnapshots } = useNetWorth();
 
-const periodOptions = ["1M", "3M", "6M", "YTD", "1Y"];
-const selectedPeriod = useStorage("networth-card-period", "1M");
+const props = defineProps<{
+  selectedPeriod: string;
+  periodOptions: readonly string[];
+}>();
+
+const emit = defineEmits<{
+  "update:selectedPeriod": [value: string];
+}>();
 
 const formatMonth = (date: Date) => {
   const year = date.getFullYear();
@@ -25,7 +30,7 @@ const formatMonth = (date: Date) => {
 const getStartMonth = () => {
   const now = new Date();
 
-  switch (selectedPeriod.value) {
+  switch (props.selectedPeriod) {
     case "1M":
       return new Date(now.getFullYear(), now.getMonth() - 1, 1);
     case "3M":
@@ -173,11 +178,11 @@ const tooltipTemplate = (d: (typeof chartData.value)[0]) => {
         type="button"
         class="px-3 py-1 text-sm font-medium rounded-md transition-colors"
         :class="
-          selectedPeriod === period
+          props.selectedPeriod === period
             ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white'
             : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
         "
-        @click="selectedPeriod = period"
+        @click="emit('update:selectedPeriod', period)"
       >
         {{ period }}
       </button>
