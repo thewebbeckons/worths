@@ -29,7 +29,8 @@ export const useNetWorth = () => {
   const {
     getGrowthForPeriod: growthForPeriod,
     getAssetsGrowthForPeriod: assetsGrowthForPeriod,
-    getLiabilitiesGrowthForPeriod: liabilitiesGrowthForPeriod
+    getLiabilitiesGrowthForPeriod: liabilitiesGrowthForPeriod,
+    getQuarterlyGrowth
   } = useGrowth()
 
   const {
@@ -227,6 +228,7 @@ export const useNetWorth = () => {
     getGrowthForPeriod,
     getAssetsGrowthForPeriod,
     getLiabilitiesGrowthForPeriod,
+    getQuarterlyGrowth,
     getFilteredHistory,
     refreshSnapshots: loadSnapshots
   }

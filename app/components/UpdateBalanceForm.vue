@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { z } from 'zod'
-import { today, getLocalTimeZone, type DateValue } from '@internationalized/date'
+import { today, getLocalTimeZone, DateFormatter, type DateValue } from '@internationalized/date'
 import type { FormSubmitEvent } from '#ui/types'
 
 const props = defineProps<{
@@ -12,6 +12,7 @@ const emit = defineEmits(['close', 'saved'])
 const { accounts, updateBalance } = useNetWorth()
 const toast = useToast()
 const isSaving = ref(false)
+const isDatePickerOpen = ref(false)
 
 const schema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -31,6 +32,7 @@ const accountOptions = computed(() => {
 
 // Get today's date as CalendarDate
 const todayDate = today(getLocalTimeZone())
+const df = new DateFormatter('en-US', { dateStyle: 'medium' })
 
 const state = reactive<{ accountId: string, balance: number, date: DateValue }>({
   accountId: props.preselectedAccountId || '',
@@ -52,6 +54,12 @@ watch(() => state.accountId, (newId) => {
   if (account) {
     state.balance = account.latestBalance
   }
+})
+
+const formattedDate = computed(() => {
+  return state.date
+    ? df.format(state.date.toDate(getLocalTimeZone()))
+    : 'Select a date'
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
@@ -118,11 +126,24 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       label="Date"
       name="date"
     >
-      <UInputDate
-        :model-value="(state.date as any)"
-        type="date"
-        @update:model-value="(v: any) => state.date = v"
-      />
+      <UPopover v-model:open="isDatePickerOpen" class="w-full">
+        <UButton
+          color="neutral"
+          variant="outline"
+          icon="i-lucide-calendar"
+          class="w-full justify-start font-normal"
+        >
+          {{ formattedDate }}
+        </UButton>
+
+        <template #content>
+          <UCalendar
+            :model-value="(state.date as any)"
+            class="p-2"
+            @update:model-value="(v: any) => { state.date = v; isDatePickerOpen = false }"
+          />
+        </template>
+      </UPopover>
     </UFormField>
 
     <div class="flex justify-end gap-2">
