@@ -1,89 +1,43 @@
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
-
-const route = useRoute();
-
-const navItems = computed<NavigationMenuItem[]>(() => [
-  {
-    label: "Dashboard",
-    icon: "i-lucide-layout-dashboard",
-    to: "/",
-    active: route.path === "/",
-  },
-  {
-    label: "Accounts",
-    icon: "i-lucide-wallet",
-    to: "/accounts",
-    active: route.path.startsWith("/accounts"),
-  },
-  {
-    label: "Trends",
-    icon: "i-lucide-trending-up",
-    to: "/trends",
-    active: route.path.startsWith("/trends"),
-  },
-]);
+const navItems = useNavItems();
 </script>
 
 <template>
-  <UDashboardGroup class="min-h-screen">
-    <UDashboardSidebar
-      collapsible
-      :resizable="true"
-      :default-size="14"
-      :min-size="12"
-      :max-size="18"
-    >
-      <template #header="{ collapsed }">
-        <div
-          class="flex items-center flex-1 py-3"
-          :class="collapsed ? 'justify-center' : 'justify-start'"
-        >
-          <UTooltip text="Worths">
-            <img
-              src="/logo.png"
-              alt="Worths Logo"
-              class="rounded-lg"
-              :class="
-                collapsed
-                  ? 'h-(--reka-dropdown-menu-trigger-width) w-(--reka-dropdown-menu-trigger-width)'
-                  : 'h-8 w-8'
-              "
-            />
-          </UTooltip>
-          <span v-if="!collapsed" class="ml-2 font-bold text-lg">Worths</span>
-        </div>
+  <div class="min-h-screen flex flex-col bg-elevated">
+    <UHeader toggle-side="left">
+      <template #left>
+        <ULink to="/" class="flex items-center gap-2 font-semibold">
+          <img src="/logo.png" alt="Worths Logo" class="h-8 w-8 rounded-md">
+          <span>Worths</span>
+        </ULink>
       </template>
 
-      <template #default="{ collapsed }">
-        <div class="flex h-full flex-col py-2">
-          <UNavigationMenu
-            :items="navItems"
-            orientation="vertical"
-            :collapsed="collapsed"
-            tooltip
-            popover
+      <UNavigationMenu :items="navItems" class="hidden md:flex" />
+
+      <template #content>
+        <UNavigationMenu
+          :items="navItems"
+          orientation="vertical"
+          class="py-4"
+        />
+      </template>
+
+      <template #right>
+        <div class="flex items-center gap-2">
+          <UColorModeButton />
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="i-lucide-settings"
+            to="/settings"
+            aria-label="Settings"
           />
         </div>
       </template>
-      <template #footer="{ collapsed }">
-        <UNavigationMenu
-          class="w-full"
-          :items="[
-            {
-              label: 'Settings',
-              icon: 'i-lucide-settings',
-              to: '/settings',
-              active: route.path.startsWith('/settings'),
-            },
-          ]"
-          orientation="vertical"
-          :collapsed="collapsed"
-          tooltip
-          popover
-        />
-      </template>
-    </UDashboardSidebar>
-    <slot />
-  </UDashboardGroup>
+    </UHeader>
+
+    <div>
+      <slot />
+    </div>
+  </div>
 </template>

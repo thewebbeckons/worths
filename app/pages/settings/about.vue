@@ -76,12 +76,18 @@ const githubUrl = 'https://github.com/thewebbeckons/worths'
             Your Data, Your Privacy
           </h3>
           <UAlert
-            icon="i-lucide-shield-check"
-            color="success"
+            icon="i-lucide-shield"
+            color="neutral"
             variant="subtle"
-            title="100% Local Storage"
-            description="All your data is stored locally in your browser using IndexedDB. Nothing is ever sent to any server. Your financial information stays completely private on your device."
+            title="Local-first security model"
+            description="Worths stores your data only in this browser using IndexedDB and does not send it to a server. It does not currently use an app passphrase to encrypt data at rest."
           />
+          <ul class="text-sm text-muted-foreground space-y-2 mt-3">
+            <li>Use a device lock and OS full-disk encryption.</li>
+            <li>Use this app on personal devices, not shared/public computers.</li>
+            <li>Browser/profile access can expose local data.</li>
+            <li>Exported JSON backups are readable files and should be stored securely.</li>
+          </ul>
         </div>
 
         <UDivider />

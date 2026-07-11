@@ -3,11 +3,7 @@
 <template>
   <UDashboardPanel id="trends">
     <template #header>
-      <UDashboardNavbar title="Trends">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
+      <UDashboardNavbar title="Trends" />
     </template>
 
     <template #body>

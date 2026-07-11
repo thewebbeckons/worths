@@ -31,20 +31,18 @@ const links = [[
     :ui="{ body: 'lg:py-12' }"
   >
     <template #header>
-      <UDashboardNavbar title="Settings">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
-
-      <UDashboardToolbar>
-        <!-- NOTE: The `-mx-1` class is used to align with the `DashboardSidebarCollapse` button here. -->
-        <UNavigationMenu
-          :items="links"
-          highlight
-          class="-mx-1 flex-1"
-        />
-      </UDashboardToolbar>
+      <div class="bg-white dark:bg-neutral-900 shadow-sm">
+        <UContainer class="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <h3 class="text-2xl font-bold">
+            Settings
+          </h3>
+          <UNavigationMenu
+            :items="links"
+            highlight
+            class="w-full sm:w-auto"
+          />
+        </UContainer>
+      </div>
     </template>
 
     <template #body>

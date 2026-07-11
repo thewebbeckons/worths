@@ -159,11 +159,12 @@ async function calculateSnapshotForMonth(
   for (const account of accounts) {
     if (!account.id) continue // Skip accounts without id
 
-    // Get the latest balance for this account <= month end
-    const balance = await database.balances
+    // Get the latest balance for this account <= month end, ordered by date
+    const balances = await database.balances
       .where('accountId').equals(account.id)
       .filter(b => b.date <= monthEnd)
-      .last()
+      .sortBy('date')
+    const balance = balances[balances.length - 1]
 
     if (!balance) continue
 

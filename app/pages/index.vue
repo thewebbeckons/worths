@@ -1,40 +1,23 @@
 <script setup lang="ts">
-const { currentNetWorth, totalAssets, totalLiabilities } = useNetWorth()
+const { currentNetWorth, totalAssets, totalLiabilities } = useNetWorth();
 </script>
 
 <template>
-  <UDashboardPanel id="dashboard">
-    <template #header>
-      <UDashboardNavbar title="Dashboard">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
-    </template>
+  <div class="space-y-8 pb-8">
+    <!-- Net Worth Header Section -->
+    <DashboardNetWorthHeader
+      :current-net-worth="currentNetWorth"
+      :total-assets="totalAssets"
+      :total-liabilities="totalLiabilities"
+    />
 
-    <template #body>
-      <div class="space-y-6">
-        <div class="flex flex-col md:flex-row gap-6">
-          <DashboardNetWorthCard
-            :current-net-worth="currentNetWorth"
-            :total-assets="totalAssets"
-            :total-liabilities="totalLiabilities"
-          />
+    <UContainer class="space-y-6">
+      <DashboardNetWorthCard />
 
-          <DashboardAssetCategoriesCard />
-        </div>
-
-        <div class="flex flex-col md:flex-row gap-6">
-          <DashboardAccountListCard
-            type="asset"
-            title="Assets"
-          />
-          <DashboardAccountListCard
-            type="liability"
-            title="Liabilities"
-          />
-        </div>
+      <div class="grid gap-6 lg:grid-cols-2">
+        <DashboardAssetCategoriesCard />
+        <DashboardQuarterlyGrowthCard />
       </div>
-    </template>
-  </UDashboardPanel>
+    </UContainer>
+  </div>
 </template>

@@ -10,6 +10,8 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'saved'])
 
 const { accounts, updateBalance } = useNetWorth()
+const toast = useToast()
+const isSaving = ref(false)
 
 const schema = z.object({
   accountId: z.string().min(1, 'Account is required'),
@@ -53,20 +55,32 @@ watch(() => state.accountId, (newId) => {
 })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  // Convert CalendarDate to string format yyyy-mm-dd
-  const dateStr = state.date
-    ? `${state.date.year}-${String(state.date.month).padStart(2, '0')}-${String(state.date.day).padStart(2, '0')}`
-    : new Date().toISOString().slice(0, 10)
+  isSaving.value = true
+  try {
+    // Convert CalendarDate to string format yyyy-mm-dd
+    const dateStr = state.date
+      ? `${state.date.year}-${String(state.date.month).padStart(2, '0')}-${String(state.date.day).padStart(2, '0')}`
+      : new Date().toISOString().slice(0, 10)
 
-  await updateBalance(event.data.accountId, event.data.balance, dateStr)
+    await updateBalance(event.data.accountId, event.data.balance, dateStr)
 
-  // Reset form
-  state.accountId = ''
-  state.balance = 0
-  state.date = todayDate
+    // Reset form
+    state.accountId = ''
+    state.balance = 0
+    state.date = todayDate
 
-  emit('saved')
-  emit('close')
+    toast.add({ title: 'Balance updated', color: 'success' })
+    emit('saved')
+    emit('close')
+  } catch (error) {
+    toast.add({
+      title: 'Failed to update balance',
+      description: String(error),
+      color: 'error'
+    })
+  } finally {
+    isSaving.value = false
+  }
 }
 </script>
 
@@ -106,8 +120,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     >
       <UInputDate
         :model-value="(state.date as any)"
-        @update:model-value="(v: any) => state.date = v"
         type="date"
+        @update:model-value="(v: any) => state.date = v"
       />
     </UFormField>
 
@@ -122,7 +136,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         type="submit"
         label="Update Balance"
         color="primary"
-        :disabled="!state.accountId"
+        :disabled="!state.accountId || isSaving"
+        :loading="isSaving"
       />
     </div>
   </UForm>

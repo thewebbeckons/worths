@@ -3,6 +3,7 @@ import { h, resolveComponent } from "vue";
 
 const { accounts, updateBalance, deleteAccount, getBalanceHistory } =
   useNetWorth();
+const toast = useToast();
 
 type AccountRow = {
   id: string;
@@ -100,26 +101,23 @@ const loadPreviousMonthBalances = async () => {
   // Calculate previous month
   const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
   const prevYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+  const prevMonthEnd = `${prevYear}-${String(prevMonth + 1).padStart(
+    2,
+    "0",
+  )}-${String(new Date(prevYear, prevMonth + 1, 0).getDate()).padStart(
+    2,
+    "0",
+  )}`;
 
   const balances: Record<string, number> = {};
 
   for (const acc of accounts.value) {
     try {
       const history = await getBalanceHistory(acc.id);
-      // Find the most recent balance from previous month or earlier
-      const prevMonthBalance = history
-        .filter((entry) => {
-          const entryDate = new Date(entry.date);
-          // Entry is from previous month or earlier
-          return (
-            entryDate.getFullYear() < prevYear ||
-            (entryDate.getFullYear() === prevYear &&
-              entryDate.getMonth() <= prevMonth)
-          );
-        })
-        .sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        )[0];
+      // Find the most recent balance from previous month or earlier (date string is yyyy-mm-dd)
+      const prevMonthBalance = [...history]
+        .reverse()
+        .find((entry) => entry.date <= prevMonthEnd);
 
       balances[acc.id] = prevMonthBalance?.value ?? 0;
     } catch {
@@ -223,9 +221,15 @@ const saveInlineBalance = async () => {
       today.getMonth() + 1
     ).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
     await updateBalance(editingAccountId.value, editingBalance.value, dateStr);
+    editingAccountId.value = null;
+  } catch (error) {
+    toast.add({
+      title: "Failed to update balance",
+      description: String(error),
+      color: "error",
+    });
   } finally {
     isSaving.value = false;
-    editingAccountId.value = null;
   }
 };
 
@@ -254,6 +258,7 @@ const openEditModal = (row: AccountRow) => {
 // State for delete confirmation
 const isDeleteModalOpen = ref(false);
 const accountToDelete = ref<AccountRow | null>(null);
+const isDeleting = ref(false);
 
 const openDeleteModal = (row: AccountRow) => {
   accountToDelete.value = row;
@@ -262,9 +267,21 @@ const openDeleteModal = (row: AccountRow) => {
 
 const confirmDelete = async () => {
   if (accountToDelete.value) {
-    await deleteAccount(accountToDelete.value.id);
-    isDeleteModalOpen.value = false;
-    accountToDelete.value = null;
+    isDeleting.value = true;
+    try {
+      await deleteAccount(accountToDelete.value.id);
+      toast.add({ title: "Account deleted", color: "success" });
+      isDeleteModalOpen.value = false;
+      accountToDelete.value = null;
+    } catch (error) {
+      toast.add({
+        title: "Failed to delete account",
+        description: String(error),
+        color: "error",
+      });
+    } finally {
+      isDeleting.value = false;
+    }
   }
 };
 
@@ -337,10 +354,10 @@ const getDropdownItems = (row: AccountRow) => [
               size="sm"
               class="w-32"
               :disabled="isSaving"
+              autofocus
               @blur="saveInlineBalance"
               @keyup.enter="saveInlineBalance"
               @keyup.escape="cancelEditing"
-              autofocus
             />
             <UButton
               v-if="isSaving"
@@ -449,7 +466,13 @@ const getDropdownItems = (row: AccountRow) => [
               variant="ghost"
               @click="isDeleteModalOpen = false"
             />
-            <UButton label="Delete" color="error" @click="confirmDelete" />
+            <UButton
+              label="Delete"
+              color="error"
+              :loading="isDeleting"
+              :disabled="isDeleting"
+              @click="confirmDelete"
+            />
           </div>
         </div>
       </template>

@@ -20,10 +20,18 @@ const props = defineProps<{
 const emit = defineEmits(['close', 'saved'])
 
 const { updateAccount } = useNetWorth()
+const toast = useToast()
+const isSaving = ref(false)
 
-const categories = ['TFSA', 'RRSP', 'Cash', 'Loan', 'Mortgage', 'Credit Card', 'Investment']
+const { profile, categories: dbCategories } = useDatabase()
 
-const { profile } = useDatabase()
+const categoryOptions = computed(() => {
+  const names = dbCategories.value.map(c => c.name)
+  if (props.account.category && !names.includes(props.account.category)) {
+    return [props.account.category, ...names]
+  }
+  return names
+})
 
 // Owner options based on profile configuration
 const ownerOptions = computed(() => {
@@ -76,12 +84,24 @@ watch(() => props.account, (newAccount) => {
 }, { deep: true })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await updateAccount(props.account.id, {
-    ...event.data,
-    notes: notes.value || undefined
-  })
-  emit('saved')
-  emit('close')
+  isSaving.value = true
+  try {
+    await updateAccount(props.account.id, {
+      ...event.data,
+      notes: notes.value || undefined
+    })
+    toast.add({ title: 'Account updated', color: 'success' })
+    emit('saved')
+    emit('close')
+  } catch (error) {
+    toast.add({
+      title: 'Failed to update account',
+      description: String(error),
+      color: 'error'
+    })
+  } finally {
+    isSaving.value = false
+  }
 }
 </script>
 
@@ -118,7 +138,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
     >
       <USelect
         v-model="state.category"
-        :items="categories"
+        :items="categoryOptions"
       />
     </UFormField>
 
@@ -162,6 +182,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         type="submit"
         label="Save Changes"
         color="primary"
+        :loading="isSaving"
+        :disabled="isSaving"
       />
     </div>
   </UForm>
