@@ -25,9 +25,7 @@ const isPositiveGrowth = computed(() => growth.value.growth >= 0);
   >
     <!-- Net Worth Section -->
     <div>
-      <div
-        class="text-2xl sm:text-5xl font-bold text-neutral-900 dark:text-white"
-      >
+      <div class="text-2xl sm:text-5xl font-bold text-default">
         {{ formatCurrency(currentNetWorth) }}
       </div>
 
@@ -48,7 +46,7 @@ const isPositiveGrowth = computed(() => growth.value.growth >= 0);
       <!-- Total Assets -->
       <div>
         <div
-          class="text-sm font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-400 mb-1"
+          class="text-sm font-semibold uppercase tracking-wider text-muted mb-1"
         >
           Total Assets
         </div>
@@ -60,7 +58,7 @@ const isPositiveGrowth = computed(() => growth.value.growth >= 0);
       <!-- Total Liabilities -->
       <div>
         <div
-          class="text-sm font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-400 mb-1"
+          class="text-sm font-semibold uppercase tracking-wider text-muted mb-1"
         >
           Total Liabilities
         </div>
