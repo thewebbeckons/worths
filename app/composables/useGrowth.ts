@@ -11,7 +11,53 @@ export interface GrowthResult {
   percentage: number
 }
 
+export interface QuarterlyGrowth {
+  label: string
+  year: number
+  quarter: number
+  growth: number
+  percentage: number
+  startNetWorth: number
+  endNetWorth: number
+}
+
 type ValueKey = 'netWorth' | 'assetsTotal' | 'liabilitiesTotal'
+
+function parseMonth(month: string): { year: number, month: number } {
+  const [year, m] = month.split('-').map(Number)
+  return { year: year!, month: m! }
+}
+
+function formatMonth(year: number, month: number): string {
+  return `${year}-${String(month).padStart(2, '0')}`
+}
+
+function getQuarter(month: number): number {
+  return Math.floor((month - 1) / 3) + 1
+}
+
+function getLastMonthOfQuarter(year: number, quarter: number): { year: number, month: number } {
+  return { year, month: quarter * 3 }
+}
+
+function getPreviousQuarterLastMonth(year: number, quarter: number): { year: number, month: number } {
+  if (quarter === 1) {
+    return { year: year - 1, month: 12 }
+  }
+  return { year, month: (quarter - 1) * 3 }
+}
+
+function findSnapshotAtOrBefore(month: string, snapshots: readonly MonthlySnapshotData[]): MonthlySnapshotData | undefined {
+  let result: MonthlySnapshotData | undefined
+  for (const snapshot of snapshots) {
+    if (snapshot.month <= month) {
+      result = snapshot
+    } else {
+      break
+    }
+  }
+  return result
+}
 
 export function useGrowth() {
   const { monthlySnapshots } = useSnapshots()
@@ -96,10 +142,71 @@ export function useGrowth() {
     return calculateGrowth(startDate, 'liabilitiesTotal', currentLiabilities)
   }
 
+  /**
+   * Get quarter-over-quarter net worth growth for the trailing quarters.
+   * @param quarterCount - Number of quarters to return (default 4)
+   */
+  function getQuarterlyGrowth(quarterCount: number = 4): QuarterlyGrowth[] {
+    const snapshots = monthlySnapshots.value
+    if (snapshots.length === 0) return []
+
+    const latestSnapshot = snapshots[snapshots.length - 1]
+    if (!latestSnapshot) return []
+
+    const { year: latestYear, month: latestMonth } = parseMonth(latestSnapshot.month)
+    let currentYear = latestYear
+    let currentQuarter = getQuarter(latestMonth)
+
+    const result: QuarterlyGrowth[] = []
+
+    while (result.length < quarterCount) {
+      // For the most recent quarter, end at the latest snapshot month (may be partial)
+      const isCurrentQuarter = result.length === 0
+      const endMonthInfo = getLastMonthOfQuarter(currentYear, currentQuarter)
+      const endMonth = isCurrentQuarter
+        ? formatMonth(latestYear, latestMonth)
+        : formatMonth(endMonthInfo.year, endMonthInfo.month)
+
+      const endSnapshot = findSnapshotAtOrBefore(endMonth, snapshots)
+
+      const prevQuarterInfo = getPreviousQuarterLastMonth(currentYear, currentQuarter)
+      const startMonth = formatMonth(prevQuarterInfo.year, prevQuarterInfo.month)
+      const startSnapshot = findSnapshotAtOrBefore(startMonth, snapshots)
+
+      if (endSnapshot && startSnapshot) {
+        const growth = endSnapshot.netWorth - startSnapshot.netWorth
+        const percentage = startSnapshot.netWorth !== 0
+          ? (growth / Math.abs(startSnapshot.netWorth)) * 100
+          : 0
+
+        result.push({
+          label: `Q${currentQuarter} ${currentYear}`,
+          year: currentYear,
+          quarter: currentQuarter,
+          growth,
+          percentage,
+          startNetWorth: startSnapshot.netWorth,
+          endNetWorth: endSnapshot.netWorth
+        })
+      }
+
+      // Move to previous quarter
+      const prev = getPreviousQuarterLastMonth(currentYear, currentQuarter)
+      currentYear = prev.year
+      currentQuarter = getQuarter(prev.month)
+
+      // Safety break to avoid infinite loop with malformed data
+      if (currentYear < 1900) break
+    }
+
+    return result
+  }
+
   return {
     calculateGrowth,
     getGrowthForPeriod,
     getAssetsGrowthForPeriod,
-    getLiabilitiesGrowthForPeriod
+    getLiabilitiesGrowthForPeriod,
+    getQuarterlyGrowth
   }
 }

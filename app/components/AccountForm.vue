@@ -11,6 +11,7 @@ const props = defineProps<{
 const emit = defineEmits(['close'])
 
 const { addAccount } = useNetWorth()
+const toast = useToast()
 
 const { profile, categories: dbCategories } = useDatabase()
 
@@ -51,6 +52,7 @@ const state = reactive({
 
 // Separate notes state (not part of zod schema since it's optional HTML content)
 const notes = ref('')
+const isSaving = ref(false)
 
 // Set default category when categories load
 watch(categoryOptions, (options) => {
@@ -60,21 +62,35 @@ watch(categoryOptions, (options) => {
 }, { immediate: true })
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-  await addAccount({
-    ...event.data,
-    notes: notes.value || undefined
-  })
-  // Reset form or close modal
-  state.name = ''
-  state.bank = ''
-  state.initialBalance = 0
-  state.owner = 'me'
-  notes.value = ''
+  isSaving.value = true
+  try {
+    await addAccount({
+      ...event.data,
+      notes: notes.value || undefined
+    })
 
-  if (props.onSuccess) {
-    props.onSuccess()
+    // Reset form or close modal
+    state.name = ''
+    state.bank = ''
+    state.initialBalance = 0
+    state.owner = 'me'
+    notes.value = ''
+
+    toast.add({ title: 'Account added', color: 'success' })
+
+    if (props.onSuccess) {
+      props.onSuccess()
+    }
+    emit('close')
+  } catch (error) {
+    toast.add({
+      title: 'Failed to add account',
+      description: error instanceof Error ? error.message : String(error),
+      color: 'error'
+    })
+  } finally {
+    isSaving.value = false
   }
-  emit('close')
 }
 </script>
 
@@ -168,6 +184,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         type="submit"
         label="Add Account"
         color="primary"
+        :loading="isSaving"
+        :disabled="isSaving"
       />
     </div>
   </UForm>

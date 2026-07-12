@@ -53,10 +53,11 @@ async function calculateExpectedSnapshot(month: string): Promise<{
   for (const account of accounts) {
     if (!account.id) continue // Skip accounts without id
 
-    const balance = await db.balances
+    const balances = await db.balances
       .where('accountId').equals(account.id)
       .filter(b => b.date <= monthEnd)
-      .last()
+      .sortBy('date')
+    const balance = balances[balances.length - 1]
 
     if (!balance) continue
 

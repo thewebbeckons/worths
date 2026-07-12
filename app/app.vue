@@ -16,6 +16,8 @@ useSeoMeta({
   ogTitle: title,
   ogDescription: description,
 });
+
+const { isOpen } = useOnboarding();
 </script>
 
 <template>
@@ -25,5 +27,12 @@ useSeoMeta({
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
+    <ClientOnly>
+      <OnboardingModal
+        :open="isOpen"
+        @update:open="isOpen = $event"
+        @complete="isOpen = false"
+      />
+    </ClientOnly>
   </UApp>
 </template>

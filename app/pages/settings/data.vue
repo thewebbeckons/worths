@@ -94,36 +94,49 @@ const onResetApp = async () => {
           </p>
         </template>
 
-        <div class="flex flex-wrap gap-4">
-          <div class="flex-1 min-w-[200px]">
-            <h3 class="font-medium mb-1">
-              Export Data
-            </h3>
-            <p class="text-sm text-muted-foreground mb-3">
-              Download a full backup of all your accounts, balances, and snapshots.
-            </p>
-            <UButton
-              icon="i-lucide-download"
-              label="Export to JSON"
-              block
-              @click="onExport"
-            />
-          </div>
+        <div class="space-y-4">
+          <UAlert
+            icon="i-lucide-info"
+            color="warning"
+            variant="subtle"
+            title="Security note"
+            description="This app is intended for low-risk personal use. Data is local-first in IndexedDB, and exported JSON files are plaintext."
+          />
+          <p class="text-sm text-muted-foreground">
+            Store exports in a secure location and avoid using this app on shared devices.
+          </p>
 
-          <div class="flex-1 min-w-[200px]">
-            <h3 class="font-medium mb-1">
-              Import Data
-            </h3>
-            <p class="text-sm text-muted-foreground mb-3">
-              Restore from a JSON backup. This will replace all current data.
-            </p>
-            <UButton
-              icon="i-lucide-upload"
-              label="Import from JSON"
-              variant="outline"
-              block
-              @click="onImportClick"
-            />
+          <div class="flex flex-wrap gap-4">
+            <div class="flex-1 min-w-[200px]">
+              <h3 class="font-medium mb-1">
+                Export Data
+              </h3>
+              <p class="text-sm text-muted-foreground mb-3">
+                Download a full backup of all your accounts, balances, and snapshots.
+              </p>
+              <UButton
+                icon="i-lucide-download"
+                label="Export to JSON"
+                block
+                @click="onExport"
+              />
+            </div>
+
+            <div class="flex-1 min-w-[200px]">
+              <h3 class="font-medium mb-1">
+                Import Data
+              </h3>
+              <p class="text-sm text-muted-foreground mb-3">
+                Restore from a JSON backup. This will replace all current data.
+              </p>
+              <UButton
+                icon="i-lucide-upload"
+                label="Import from JSON"
+                variant="outline"
+                block
+                @click="onImportClick"
+              />
+            </div>
           </div>
         </div>
       </UCard>

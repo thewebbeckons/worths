@@ -52,7 +52,7 @@ const emptyMessage = computed(() =>
 
 <template>
   <UCard
-    class="md:w-1/2 shadow-sm"
+    class="h-full shadow-sm"
     variant="outline"
   >
     <div

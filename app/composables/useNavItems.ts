@@ -5,7 +5,7 @@ export const useNavItems = () => {
 
   return computed<NavigationMenuItem[]>(() => [
     {
-      label: 'Dashboard',
+      label: 'Summary',
       icon: 'i-lucide-layout-dashboard',
       to: '/',
       active: route.path === '/'
@@ -15,6 +15,12 @@ export const useNavItems = () => {
       icon: 'i-lucide-wallet',
       to: '/accounts',
       active: route.path.startsWith('/accounts')
+    },
+    {
+      label: 'Trends',
+      icon: 'i-lucide-trending-up',
+      to: '/trends',
+      active: route.path.startsWith('/trends')
     }
   ])
 }

@@ -120,10 +120,11 @@ async function loadAccounts(): Promise<void> {
   for (const account of allAccounts) {
     if (!account.id) continue // Skip accounts without id
 
-    // Get latest balance for this account
-    const latestBalance = await db.balances
+    // Get latest balance by date (not insertion order)
+    const balances = await db.balances
       .where('accountId').equals(account.id)
-      .last()
+      .sortBy('date')
+    const latestBalance = balances[balances.length - 1]
 
     accountsWithDetails.push({
       ...account,

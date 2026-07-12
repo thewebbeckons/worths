@@ -6,24 +6,11 @@ import { formatCurrency, formatCompactCurrency, parseLocalDate } from '~/utils/f
 const props = defineProps<{
   balanceHistory: { date: string, value: number }[]
   accountType?: 'asset' | 'liability'
-  monthsToShow?: number
 }>()
 
-// Filter to last N months (default 6)
-const filteredHistory = computed(() => {
-  const months = props.monthsToShow ?? 6
-  const cutoffDate = new Date()
-  cutoffDate.setMonth(cutoffDate.getMonth() - months)
-
-  return props.balanceHistory.filter((item) => {
-    const itemDate = parseLocalDate(item.date)
-    return itemDate >= cutoffDate
-  })
-})
-
-// Transform data for Unovis - use timestamp for x-axis
+// Transform all balance history points for Unovis - use timestamp for x-axis
 const data = computed(() => {
-  return filteredHistory.value.map((item) => {
+  return props.balanceHistory.map((item) => {
     const date = parseLocalDate(item.date)
     return {
       x: date.getTime(),

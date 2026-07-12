@@ -3,15 +3,15 @@
 <template>
   <UDashboardPanel id="trends">
     <template #header>
-      <UDashboardNavbar title="Trends">
-        <template #leading>
-          <UDashboardSidebarCollapse />
-        </template>
-      </UDashboardNavbar>
+      <div class="bg-white dark:bg-neutral-900 shadow-sm">
+        <UContainer class="flex items-center justify-between py-4">
+          <h3 class="text-2xl font-bold">Trends</h3>
+        </UContainer>
+      </div>
     </template>
 
     <template #body>
-      <div class="space-y-6">
+      <UContainer class="space-y-6">
         <!-- Chart Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Category Balances -->
@@ -67,7 +67,7 @@
             <TrendsGrowthChart />
           </UCard>
         </div>
-      </div>
+      </UContainer>
     </template>
   </UDashboardPanel>
 </template>
