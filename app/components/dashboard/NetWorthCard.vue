@@ -179,7 +179,7 @@ const tooltipTemplate = (d: (typeof chartData.value)[0]) => {
         class="px-3 py-1 text-sm font-medium rounded-md transition-colors"
         :class="
           props.selectedPeriod === period
-            ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-900 dark:text-white'
+            ? 'bg-primary text-neutral-900 dark:text-white'
             : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
         "
         @click="emit('update:selectedPeriod', period)"

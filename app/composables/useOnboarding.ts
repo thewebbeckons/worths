@@ -25,7 +25,10 @@ export function useOnboarding() {
   const { accounts, isReady, updateProfile, addAccount, addCategory, categories } = useDatabase()
 
   async function initialize() {
-    if (import.meta.server || initialized) return
+    if (initialized) return
+    initialized = true
+
+    if (import.meta.server) return
 
     await new Promise<void>((resolve) => {
       const stop = watch(isReady, (ready) => {
@@ -44,8 +47,6 @@ export function useOnboarding() {
     if (!isComplete.value) {
       isOpen.value = true
     }
-
-    initialized = true
   }
 
   function startOnboarding() {

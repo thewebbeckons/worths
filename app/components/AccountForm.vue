@@ -85,7 +85,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   } catch (error) {
     toast.add({
       title: 'Failed to add account',
-      description: String(error),
+      description: error instanceof Error ? error.message : String(error),
       color: 'error'
     })
   } finally {

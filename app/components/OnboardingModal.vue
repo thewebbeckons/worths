@@ -27,6 +27,16 @@ const totalSlides = 4
 const colorOptions = ['primary', 'secondary', 'success', 'info', 'warning', 'error', 'neutral'] as const
 type ColorOption = typeof colorOptions[number]
 
+const colorClassMap: Record<ColorOption, string> = {
+  primary: 'bg-primary',
+  secondary: 'bg-secondary',
+  success: 'bg-success',
+  info: 'bg-info',
+  warning: 'bg-warning',
+  error: 'bg-error',
+  neutral: 'bg-neutral'
+}
+
 const profileState = reactive({
   userName: '',
   userColor: 'primary' as ColorOption,
@@ -241,7 +251,7 @@ const slideTitles = [
                         type="button"
                         class="w-8 h-8 rounded-full transition-all ring-offset-2 ring-offset-background"
                         :class="[
-                          `bg-${color}`,
+                          colorClassMap[color],
                           profileState.userColor === color ? 'ring-2 ring-current scale-110' : 'hover:scale-105'
                         ]"
                         @click="profileState.userColor = color"
@@ -285,7 +295,7 @@ const slideTitles = [
                         type="button"
                         class="w-8 h-8 rounded-full transition-all ring-offset-2 ring-offset-background"
                         :class="[
-                          `bg-${color}`,
+                          colorClassMap[color],
                           profileState.spouseColor === color ? 'ring-2 ring-current scale-110' : 'hover:scale-105'
                         ]"
                         @click="profileState.spouseColor = color"

@@ -96,7 +96,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   } catch (error) {
     toast.add({
       title: 'Failed to update account',
-      description: String(error),
+      description: error instanceof Error ? error.message : 'Unexpected error',
       color: 'error'
     })
   } finally {
