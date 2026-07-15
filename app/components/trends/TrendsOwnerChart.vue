@@ -4,7 +4,7 @@ import { formatCurrency, formatCompactCurrency } from "~/utils/format";
 const { accounts } = useNetWorth();
 
 // Colors for owners (index-based for consistent assignment)
-const ownerColorPalette = ["#6366f1", "#22c55e", "#f59e42", "#8b5cf6"];
+const ownerColorPalette = ["#c6523f", "#477159", "#d7a44b", "#7e8fa8"];
 
 interface OwnerData {
   owner: string;
@@ -60,11 +60,11 @@ const chartData = computed<OwnerData[]>(() => {
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">
               {{ item.owner }}
             </span>
-            <span class="text-sm text-gray-500 dark:text-gray-400 font-mono">
+            <span class="text-sm text-muted tabular-nums">
               {{ formatCompactCurrency(item.total) }}
             </span>
           </div>
-          <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-4 overflow-hidden">
+          <div class="h-3.5 w-full overflow-hidden rounded-full bg-muted">
             <div
               class="h-full rounded-full transition-all duration-200 group-hover:brightness-110"
               :style="{

@@ -5,17 +5,18 @@
 
 /* Chart tooltip styling */
 :deep(.chart-tooltip) {
-  background: white;
-  border-radius: 8px;
+  border: 1px solid var(--ui-border);
+  border-radius: 14px;
+  background: var(--ui-bg-elevated);
   padding: 12px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgb(49 42 32 / 12%);
   font-size: 13px;
   min-width: 140px;
 }
 
 :deep(.chart-tooltip-header) {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ui-text-highlighted);
   margin-bottom: 8px;
   font-size: 14px;
 }
@@ -39,20 +40,20 @@
 }
 
 :deep(.chart-tooltip-label) {
-  color: #6b7280;
+  color: var(--ui-text-muted);
   flex: 1;
 }
 
 :deep(.chart-tooltip-value) {
   font-weight: 600;
-  color: #1f2937;
+  color: var(--ui-text-highlighted);
 }
 
 /* Axis styling for XY charts */
 :deep(.unovis-xy-container) {
-  --vis-axis-tick-color: rgb(var(--color-neutral-400));
-  --vis-axis-grid-color: rgb(var(--color-neutral-200));
-  --vis-axis-label-color: rgb(var(--color-neutral-500));
+  --vis-axis-tick-color: var(--color-stone-400);
+  --vis-axis-grid-color: var(--color-stone-200);
+  --vis-axis-label-color: var(--color-stone-500);
   /* Reset default tooltip container to be invisible */
   --vis-tooltip-background-color: transparent;
   --vis-tooltip-border-color: transparent;
@@ -62,7 +63,7 @@
 
 :deep(.unovis-axis-tick text) {
   font-size: 11px;
-  fill: rgb(var(--color-neutral-500));
+  fill: var(--color-stone-500);
 }
 
 /* Single container styling (for donut charts) */
@@ -75,19 +76,6 @@
 }
 
 /* Dark mode tooltip */
-.dark :deep(.chart-tooltip) {
-  background: #1f2937;
-}
-
-.dark :deep(.chart-tooltip-header),
-.dark :deep(.chart-tooltip-value) {
-  color: white;
-}
-
-.dark :deep(.chart-tooltip-label) {
-  color: #9ca3af;
-}
-
 .dark :deep(.unovis-xy-container) {
-  --vis-axis-grid-color: rgb(var(--color-neutral-700));
+  --vis-axis-grid-color: var(--color-stone-700);
 }

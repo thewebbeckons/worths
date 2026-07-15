@@ -3,15 +3,15 @@
 <template>
   <UDashboardPanel id="trends">
     <template #header>
-      <div class="bg-white dark:bg-neutral-900 shadow-sm">
-        <UContainer class="flex items-center justify-between py-4">
-          <h3 class="text-2xl font-bold">Trends</h3>
+      <div>
+        <UContainer class="py-10 sm:py-14">
+          <h1 class="page-title">Trends</h1>
         </UContainer>
       </div>
     </template>
 
     <template #body>
-      <UContainer class="space-y-6">
+      <UContainer class="space-y-6 pb-14">
         <!-- Chart Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <!-- Category Balances -->
@@ -22,7 +22,7 @@
                   name="i-heroicons-chart-bar"
                   class="w-5 h-5 text-primary"
                 />
-                <h3 class="font-semibold">Balances by Category</h3>
+                <h2 class="section-title">Balances by category</h2>
               </div>
             </template>
             <TrendsCategoryChart />
@@ -36,7 +36,7 @@
                   name="i-heroicons-building-library"
                   class="w-5 h-5 text-primary"
                 />
-                <h3 class="font-semibold">Breakdown by Bank</h3>
+                <h2 class="section-title">Breakdown by bank</h2>
               </div>
             </template>
             <TrendsBankChart />
@@ -47,7 +47,7 @@
             <template #header>
               <div class="flex items-center gap-2">
                 <UIcon name="i-heroicons-users" class="w-5 h-5 text-primary" />
-                <h3 class="font-semibold">Breakdown by Owner</h3>
+                <h2 class="section-title">Breakdown by owner</h2>
               </div>
             </template>
             <TrendsOwnerChart />
@@ -61,7 +61,7 @@
                   name="i-heroicons-arrow-trending-up"
                   class="w-5 h-5 text-primary"
                 />
-                <h3 class="font-semibold">Month-over-Month Growth</h3>
+                <h2 class="section-title">Month-over-month growth</h2>
               </div>
             </template>
             <TrendsGrowthChart />

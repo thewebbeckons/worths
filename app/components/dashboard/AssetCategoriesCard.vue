@@ -23,7 +23,7 @@ const processedCategories = computed(() => {
       label: "Others",
       value: othersValue,
       percentage: othersPercentage,
-      color: "#6b7280", // neutral gray for "Others"
+      color: "#8c806f", // warm neutral for "Others"
     },
   ];
 });
@@ -71,16 +71,10 @@ const topCategory = computed(() => {
 </script>
 
 <template>
-  <UCard class="h-full shadow-sm" variant="outline">
+  <UCard class="h-full" variant="outline">
     <div class="flex flex-col h-full">
-      <!-- Header with Subtitle -->
       <div class="mb-4">
-        <div
-          class="text-lg font-bold uppercase tracking-wider text-neutral-900 dark:text-white"
-        >
-          Asset Breakdown
-        </div>
-        <div class="text-sm text-muted">Distribution of assets by category</div>
+        <h2 class="section-title">Where your assets live</h2>
       </div>
 
       <!-- Donut Chart with Legend Layout -->
@@ -94,9 +88,9 @@ const topCategory = computed(() => {
             <VisDonut
               :value="value"
               :color="color"
-              :arc-width="24"
-              :pad-angle="0"
-              :corner-radius="0"
+              :arc-width="22"
+              :pad-angle="0.025"
+              :corner-radius="6"
             />
             <VisTooltip :triggers="triggers" />
           </VisSingleContainer>
@@ -105,7 +99,7 @@ const topCategory = computed(() => {
         <!-- Category Breakdown (Right) -->
         <div class="flex-1 space-y-2.5">
           <div
-            class="text-xs uppercase tracking-wide text-muted font-semibold mb-2"
+            class="metric-label mb-2"
           >
             Category Breakdown
           </div>
@@ -153,7 +147,7 @@ const topCategory = computed(() => {
       <!-- Bottom Section: Top Category & Total Assets Side by Side -->
       <div
         v-if="processedCategories.length > 0"
-        class="flex gap-6 pt-3 mt-4 border-t border-neutral-200 dark:border-neutral-700"
+        class="mt-4 flex gap-6 border-t border-default pt-4"
       >
         <!-- Top Category -->
         <div class="flex-1">
@@ -163,11 +157,11 @@ const topCategory = computed(() => {
               :style="{ backgroundColor: topCategory?.color }"
             />
             <span
-              class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
+              class="metric-label"
               >Top Category</span
             >
           </div>
-          <div class="text-lg font-semibold text-neutral-900 dark:text-white">
+          <div class="section-title">
             {{ topCategory?.label }}
           </div>
         </div>
@@ -177,7 +171,7 @@ const topCategory = computed(() => {
           <div class="flex items-center gap-1.5 mb-0.5">
             <span class="w-2 h-2 rounded-full bg-primary-500" />
             <span
-              class="text-xs font-bold uppercase tracking-wider text-neutral-500 dark:text-neutral-400"
+              class="metric-label"
               >Total Assets</span
             >
           </div>

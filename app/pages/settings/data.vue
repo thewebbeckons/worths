@@ -83,15 +83,11 @@ const onResetApp = async () => {
       <!-- Data Management Section -->
       <UCard
         variant="outline"
-        class="shadow-sm"
       >
         <template #header>
           <h2 class="text-xl font-semibold">
             Data Management
           </h2>
-          <p class="text-sm text-muted-foreground">
-            Export or import your complete financial data via JSON files.
-          </p>
         </template>
 
         <div class="space-y-4">
@@ -155,9 +151,6 @@ const onResetApp = async () => {
           <h2 class="text-xl font-semibold text-red-600 dark:text-red-400">
             Danger Zone
           </h2>
-          <p class="text-sm text-muted-foreground">
-            Irreversible actions that affect your data.
-          </p>
         </template>
 
         <template #body>

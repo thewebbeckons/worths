@@ -7,7 +7,6 @@ const githubUrl = 'https://github.com/thewebbeckons/worths'
     <!-- About Section -->
     <UCard
       variant="outline"
-      class="shadow-sm"
     >
       <template #header>
         <div class="flex items-center gap-3">
@@ -19,9 +18,6 @@ const githubUrl = 'https://github.com/thewebbeckons/worths'
             <h2 class="text-xl font-semibold">
               Worths
             </h2>
-            <p class="text-sm text-muted-foreground">
-              Personal Net Worth Tracker
-            </p>
           </div>
         </div>
       </template>

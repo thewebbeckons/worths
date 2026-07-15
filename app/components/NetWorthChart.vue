@@ -26,7 +26,7 @@ const x = (d: typeof data.value[0]) => d.x
 const y = (d: typeof data.value[0]) => d.y
 
 // Chart color
-const color = '#3b82f6' // Blue
+const color = '#c6523f'
 
 // Formatters
 const xTickFormat = (tick: number) => {

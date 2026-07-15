@@ -28,19 +28,14 @@ function formatPercentage(value: number): string {
 
 <template>
   <UCard
-    class="h-full min-h-80 shadow-sm"
+    class="h-full min-h-80"
     variant="outline"
     :ui="{ body: 'h-full flex flex-col' }"
   >
     <div class="grid grid-rows-[auto_1fr] h-full gap-4">
       <!-- Header -->
       <div>
-        <div class="text-lg font-bold uppercase tracking-wider text-neutral-900 dark:text-white">
-          Quarterly Growth
-        </div>
-        <div class="text-sm text-muted">
-          Net worth change quarter over quarter
-        </div>
+        <h2 class="section-title">Quarterly growth</h2>
       </div>
 
       <!-- Chart -->
@@ -66,14 +61,14 @@ function formatPercentage(value: number): string {
             <!-- Positive bar (extends right from center) -->
             <div
               v-if="quarter.growth >= 0"
-              class="absolute left-1/2 top-0 bottom-0 rounded-r bg-success transition-all duration-500"
+              class="absolute left-1/2 top-0 bottom-0 rounded-r bg-secondary-200 transition-all duration-500 dark:bg-secondary-700/80"
               :style="{ width: `${barWidth(quarter.growth)}%` }"
             />
 
             <!-- Negative bar (extends left from center) -->
             <div
               v-else
-              class="absolute right-1/2 top-0 bottom-0 rounded-l bg-error transition-all duration-500"
+              class="absolute right-1/2 top-0 bottom-0 rounded-l bg-primary-200/80 transition-all duration-500 dark:bg-primary-800/70"
               :style="{ width: `${barWidth(quarter.growth)}%` }"
             />
           </div>
@@ -81,7 +76,7 @@ function formatPercentage(value: number): string {
           <!-- Value -->
           <div
             class="w-32 shrink-0 text-right text-sm font-semibold tabular-nums"
-            :class="quarter.growth >= 0 ? 'text-success' : 'text-error'"
+            :class="quarter.growth >= 0 ? 'text-secondary-700 dark:text-secondary-300' : 'text-primary-700/80 dark:text-primary-300/80'"
           >
             <div :title="formatCurrency(quarter.growth)">
               {{ formatGrowth(quarter.growth) }}

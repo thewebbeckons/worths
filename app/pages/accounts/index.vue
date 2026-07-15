@@ -48,32 +48,36 @@ const bankOptions = computed(() => {
 </script>
 
 <template>
-  <div>
-    <div class="bg-white dark:bg-neutral-900 shadow-sm">
-      <UContainer class="flex items-center justify-between py-4">
-        <h3 class="text-2xl font-bold">Accounts</h3>
+  <div class="pb-14">
+    <UContainer class="flex flex-col gap-5 py-10 sm:flex-row sm:items-end sm:justify-between sm:py-14">
+      <div>
+        <h1 class="page-title">Your accounts</h1>
+      </div>
+      <div>
         <UButton
-          label="Add Account"
+          label="Add account"
           icon="i-heroicons-plus"
+          size="lg"
           @click="isAddAccountOpen = true"
         />
-      </UContainer>
-    </div>
+      </div>
+    </UContainer>
+
     <UContainer class="space-y-6 py-8">
-      <div class="flex items-center justify-between gap-4">
+      <div class="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
         <UInput
           ref="searchInput"
           v-model="searchQuery"
           placeholder="Search by name or bank..."
           icon="i-lucide-search"
           clear
-          class="w-64"
+          class="w-full lg:w-72"
         >
           <template #trailing>
             <UKbd value="/" />
           </template>
         </UInput>
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-3">
           <USelectMenu
             v-if="categoryOptions.length > 1"
             v-model="categoryFilter"
@@ -104,7 +108,7 @@ const bankOptions = computed(() => {
         </div>
       </div>
 
-      <UCard variant="outline" class="shadow-sm">
+      <UCard variant="outline">
         <AccountList
           :search-query="searchQuery"
           :category-filter="categoryFilter"

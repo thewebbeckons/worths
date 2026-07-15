@@ -52,7 +52,7 @@ const emptyMessage = computed(() =>
 
 <template>
   <UCard
-    class="h-full shadow-sm"
+    class="h-full"
     variant="outline"
   >
     <div
@@ -60,7 +60,7 @@ const emptyMessage = computed(() =>
       class="space-y-2"
     >
       <div class="flex justify-between items-center mb-3">
-        <h2 class="text-xl uppercase font-bold">
+        <h2 class="section-title">
           {{ title }}
         </h2>
         <NuxtLink

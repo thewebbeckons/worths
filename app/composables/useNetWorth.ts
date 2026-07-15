@@ -156,7 +156,7 @@ export const useNetWorth = () => {
     }
 
     // Colors for the chart
-    const colors = ['#6366f1', '#22d3ee', '#10b981', '#f59e42', '#ec4899', '#8b5cf6', '#f97316']
+    const colors = ['#c6523f', '#477159', '#d7a44b', '#7e8fa8', '#a77272', '#71866f', '#b67b55']
 
     return Object.entries(groups)
       .filter(([_, value]) => value > 0)

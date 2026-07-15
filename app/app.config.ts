@@ -1,13 +1,13 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: "blue",
-      secondary: "purple",
-      neutral: "zinc",
+      primary: "coral",
+      secondary: "sage",
+      neutral: "stone",
     },
     navigationMenu: {
       slots: {
-        link: "text-base font-semibold",
+        link: "text-sm font-semibold rounded-full px-4",
       },
       variants: {
         orientation: {
@@ -21,18 +21,34 @@ export default defineAppConfig({
           variant: "pill",
           active: true,
           highlight: false,
-          class: { link: "before:bg-primary/10" },
+          class: { link: "before:bg-primary/10 text-highlighted" },
         },
       ],
     },
     dashboardPanel: {
       slots: {
-        body: "bg-elevated/50",
+        body: "bg-transparent",
       },
     },
     card: {
       slots: {
-        root: "rounded-2xl",
+        root: "soft-card rounded-[1.35rem]",
+        header: "border-b-0 pb-2",
+      },
+    },
+    button: {
+      slots: {
+        base: "rounded-full font-semibold",
+      },
+    },
+    input: {
+      slots: {
+        root: "rounded-xl",
+      },
+    },
+    modal: {
+      slots: {
+        content: "rounded-[1.5rem]",
       },
     },
   },

@@ -5,18 +5,18 @@ const { accounts } = useNetWorth();
 
 // Colors for each category
 const categoryColorMap: Record<string, string> = {
-  Investment: "#6366f1",
-  Cash: "#22c55e",
-  Credit: "#f87171",
-  Property: "#f59e42",
-  Retirement: "#8b5cf6",
-  Savings: "#22d3ee",
-  TFSA: "#22d3ee",
-  RRSP: "#8b5cf6",
-  Mortgage: "#f87171",
-  "Credit Card": "#f87171",
-  Crypto: "#f59e42",
-  Other: "#94a3b8",
+  Investment: "#c6523f",
+  Cash: "#477159",
+  Credit: "#a77272",
+  Property: "#d7a44b",
+  Retirement: "#7e8fa8",
+  Savings: "#71866f",
+  TFSA: "#71866f",
+  RRSP: "#7e8fa8",
+  Mortgage: "#a77272",
+  "Credit Card": "#a77272",
+  Crypto: "#b67b55",
+  Other: "#8c806f",
 };
 
 interface CategoryData {
@@ -56,7 +56,7 @@ const chartData = computed<CategoryData[]>(() => {
     category: item.category,
     type: item.type,
     total: item.total,
-    color: categoryColorMap[item.category] ?? "#94a3b8",
+    color: categoryColorMap[item.category] ?? "#8c806f",
     percentage: (item.total / maxTotal) * 100,
   }));
 });
@@ -75,11 +75,11 @@ const chartData = computed<CategoryData[]>(() => {
             <span class="text-sm font-medium text-gray-700 dark:text-gray-300 truncate max-w-[140px]">
               {{ item.category }}
             </span>
-            <span class="text-sm text-gray-500 dark:text-gray-400 font-mono">
+            <span class="text-sm text-muted tabular-nums">
               {{ formatCompactCurrency(item.total) }}
             </span>
           </div>
-          <div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-4 overflow-hidden">
+          <div class="h-3.5 w-full overflow-hidden rounded-full bg-muted">
             <div
               class="h-full rounded-full transition-all duration-200 group-hover:brightness-110"
               :style="{

@@ -67,7 +67,7 @@ const handleBalanceUpdated = async () => {
 </script>
 
 <template>
-  <UContainer class="py-6 space-y-6">
+  <UContainer class="space-y-6 py-10 sm:py-14">
     <div
       v-if="account"
       class="space-y-6"
@@ -80,9 +80,9 @@ const handleBalanceUpdated = async () => {
       >
         Back to Accounts
       </UButton>
-      <div class="flex justify-between items-start gap-4">
+      <div class="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
         <div class="space-y-2 flex-1">
-          <h1 class="text-3xl font-bold">
+          <h1 class="page-title !text-[clamp(2.25rem,5vw,3.6rem)]">
             {{ account.name }}
           </h1>
           <div class="flex gap-2 text-gray-500">
@@ -104,7 +104,7 @@ const handleBalanceUpdated = async () => {
           </div>
         </div>
 
-        <div class="flex gap-2 shrink-0">
+        <div class="flex flex-wrap gap-2 shrink-0">
           <UButton
             v-if="account.notes"
             icon="i-lucide-sticky-note"
@@ -131,10 +131,9 @@ const handleBalanceUpdated = async () => {
       <!-- Balance History Chart -->
       <UCard
         variant="outline"
-        class="shadow-sm"
       >
         <template #header>
-          <div class="text-lg font-bold">
+          <div class="section-title">
             Balance Trend
           </div>
         </template>
@@ -163,10 +162,9 @@ const handleBalanceUpdated = async () => {
       <!-- Balance History Table -->
       <UCard
         variant="outline"
-        class="shadow-sm"
       >
         <template #header>
-          <div class="text-lg font-bold">
+          <div class="section-title">
             Balance History
           </div>
         </template>

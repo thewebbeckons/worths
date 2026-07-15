@@ -131,7 +131,6 @@ const exportToCsv = () => {
 <template>
   <UCard
     variant="outline"
-    class="shadow-sm"
   >
     <template #header>
       <div class="flex items-center justify-between">
@@ -139,9 +138,6 @@ const exportToCsv = () => {
           <h3 class="text-base font-semibold">
             Export Accounts
           </h3>
-          <p class="text-sm text-muted">
-            Export your account balances to CSV to use in excel or google sheets
-          </p>
         </div>
         <div class="flex items-center gap-2">
           <UButton

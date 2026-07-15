@@ -47,8 +47,7 @@ const startDate = computed(() => getStartDate());
 </script>
 
 <template>
-  <div class="space-y-8 pb-8">
-    <!-- Net Worth Header Section -->
+  <div class="space-y-2 pb-14">
     <DashboardNetWorthHeader
       :current-net-worth="currentNetWorth"
       :total-assets="totalAssets"
@@ -58,14 +57,20 @@ const startDate = computed(() => getStartDate());
     />
 
     <UContainer class="space-y-6">
-      <DashboardNetWorthCard
-        v-model:selected-period="selectedPeriod"
-        :period-options="periodOptions"
-      />
+      <div class="reveal-up">
+        <DashboardNetWorthCard
+          v-model:selected-period="selectedPeriod"
+          :period-options="periodOptions"
+        />
+      </div>
 
       <div class="grid gap-6 lg:grid-cols-2">
-        <DashboardAssetCategoriesCard />
-        <DashboardQuarterlyGrowthCard />
+        <div class="reveal-up">
+          <DashboardAssetCategoriesCard />
+        </div>
+        <div class="reveal-up">
+          <DashboardQuarterlyGrowthCard />
+        </div>
       </div>
     </UContainer>
   </div>

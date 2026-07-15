@@ -105,7 +105,7 @@ const uniqueMonthIndices = computed(() => {
 const x = (d: (typeof chartData.value)[0]) => d.x;
 const yNetWorth = (d: (typeof chartData.value)[0]) => d.netWorth;
 
-const netWorthColor = "#3b82f6";
+const netWorthColor = "#c6523f";
 
 // X-axis tick values - only show unique months
 const xTickValues = computed(() => uniqueMonthIndices.value);
@@ -135,7 +135,29 @@ const tooltipTemplate = (d: (typeof chartData.value)[0]) => {
 </script>
 
 <template>
-  <div class="w-full">
+  <UCard :ui="{ body: 'p-5 sm:p-7' }">
+    <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="section-title">Net worth over time</h2>
+      </div>
+      <div class="flex w-fit items-center gap-1 rounded-full bg-muted p-1">
+        <button
+          v-for="period in periodOptions"
+          :key="period"
+          type="button"
+          class="min-w-10 rounded-full px-3 py-1.5 text-xs font-semibold transition-all"
+          :class="
+            props.selectedPeriod === period
+              ? 'bg-primary text-white shadow-sm'
+              : 'text-muted hover:text-highlighted'
+          "
+          @click="emit('update:selectedPeriod', period)"
+        >
+          {{ period }}
+        </button>
+      </div>
+    </div>
+
     <div v-if="chartData.length > 1" class="h-[300px]">
       <VisXYContainer
         :data="chartData"
@@ -170,24 +192,7 @@ const tooltipTemplate = (d: (typeof chartData.value)[0]) => {
       Not enough data to display chart
     </div>
 
-    <!-- Period Selector -->
-    <div class="flex items-center gap-1 mt-2">
-      <button
-        v-for="period in periodOptions"
-        :key="period"
-        type="button"
-        class="px-3 py-1 text-sm font-medium rounded-md transition-colors"
-        :class="
-          props.selectedPeriod === period
-            ? 'bg-primary text-neutral-900 dark:text-white'
-            : 'text-neutral-500 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white'
-        "
-        @click="emit('update:selectedPeriod', period)"
-      >
-        {{ period }}
-      </button>
-    </div>
-  </div>
+  </UCard>
 </template>
 
 <style scoped>

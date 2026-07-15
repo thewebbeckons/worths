@@ -97,7 +97,6 @@ async function onDeleteCategory() {
       <!-- Profile Section -->
       <UCard
         variant="outline"
-        class="shadow-sm"
       >
         <template #header>
           <div class="flex items-center justify-between">
@@ -105,9 +104,6 @@ async function onDeleteCategory() {
               <h2 class="text-xl font-semibold">
                 Profile
               </h2>
-              <p class="text-sm text-muted-foreground">
-                Set your name and optionally add a spouse/partner.
-              </p>
             </div>
             <UButton
               v-if="!isEditingProfile"
@@ -273,7 +269,6 @@ async function onDeleteCategory() {
       <!-- Account Categories Section -->
       <UCard
         variant="outline"
-        class="shadow-sm"
       >
         <template #header>
           <div class="flex items-center justify-between">
@@ -281,9 +276,6 @@ async function onDeleteCategory() {
               <h2 class="text-xl font-semibold">
                 Account Categories
               </h2>
-              <p class="text-sm text-muted-foreground">
-                Organize your accounts by category (e.g., Investment, Savings, Credit).
-              </p>
             </div>
             <UButton
               icon="i-lucide-plus"

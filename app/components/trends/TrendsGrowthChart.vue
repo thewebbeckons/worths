@@ -81,7 +81,7 @@ const loadGrowthData = async () => {
       growth,
       currentTotal: data.currentTotal,
       previousTotal: data.previousTotal,
-      color: growth >= 0 ? "#22c55e" : "#f87171",
+      color: growth >= 0 ? "#477159" : "#a77272",
       percentage: 0,
     });
   }

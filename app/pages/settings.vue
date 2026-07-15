@@ -31,11 +31,11 @@ const links = [[
     :ui="{ body: 'lg:py-12' }"
   >
     <template #header>
-      <div class="bg-white dark:bg-neutral-900 shadow-sm">
-        <UContainer class="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <h3 class="text-2xl font-bold">
-            Settings
-          </h3>
+      <div>
+        <UContainer class="flex flex-col gap-7 py-10 sm:flex-row sm:items-end sm:justify-between sm:py-14">
+          <div>
+            <h1 class="page-title">Settings</h1>
+          </div>
           <UNavigationMenu
             :items="links"
             highlight
@@ -46,7 +46,7 @@ const links = [[
     </template>
 
     <template #body>
-      <div class="flex flex-col gap-4 sm:gap-6 lg:gap-12 w-full lg:max-w-2xl mx-auto">
+      <div class="flex w-full flex-col gap-4 pb-14 sm:gap-6 lg:max-w-2xl lg:gap-12 mx-auto">
         <NuxtPage />
       </div>
     </template>

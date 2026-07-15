@@ -26,7 +26,7 @@ const x = (d: typeof data.value[0]) => d.x
 const y = (d: typeof data.value[0]) => d.y
 
 // Color based on account type
-const color = computed(() => props.accountType === 'liability' ? '#f87171' : '#22c55e')
+const color = computed(() => props.accountType === 'liability' ? '#a77272' : '#477159')
 const label = computed(() => props.accountType === 'liability' ? 'Balance' : 'Balance')
 
 // Formatters - show month and year for x-axis ticks
